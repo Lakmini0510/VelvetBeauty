@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Client Reviews')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+                <div>
+                    <span class="badge badge-rose" style="margin-bottom: 8px;">Client Feedback</span>
+                    <h2>Reviews &amp; Verified Testimonials</h2>
+                </div>
+                <a th:href="@{/reviews/new}" class="btn btn-primary btn-sm">✦ Share Your Experience</a>
+            </div>
+
+            <!-- Rating Overview & Filters Card -->
+            <div class="card" style="padding: 24px; margin-bottom: 36px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div style="font-size: 3rem; font-weight: 700; color: var(--gold-light); line-height: 1;" 
+                             th:text="${averageRating}">4.9</div>
+                        <div>
+                            <div style="color: var(--gold-primary); font-size: 1.2rem;">★★★★★</div>
+                            <small style="color: var(--text-muted);">Overall Salon Guest Satisfaction</small>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/reviews}" method="GET" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <select name="serviceId" class="form-select" style="width: auto; min-width: 200px;">
+                            <option value="">All Services</option>
+                            <option th:each="s : ${services}" th:value="${s.id}" th:text="${s.name}"
+                                    th:selected="${selectedServiceId != null and selectedServiceId == s.id}"></option>
+                        </select>
+
+                        <select name="stylistId" class="form-select" style="width: auto; min-width: 180px;">
+                            <option value="">All Stylists</option>
+                            <option th:each="st : ${stylists}" th:value="${st.id}" th:text="${st.name}"
+                                    th:selected="${selectedStylistId != null and selectedStylistId == st.id}"></option>
+                        </select>
+
+                        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                        <a th:href="@{/reviews}" class="btn btn-outline btn-sm">Reset</a>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reviews List -->
+            <div th:if="${#lists.isEmpty(reviews)}" style="text-align: center; padding: 60px 0;">
+                <h3 style="color: var(--text-secondary);">No reviews available for the selected filter.</h3>
+                <a th:href="@{/reviews}" class="btn btn-outline" style="margin-top: 16px;">View All Reviews</a>
+            </div>
+
+            <div class="grid-3" th:if="${!#lists.isEmpty(reviews)}">
+                <div class="card" style="padding: 24px; display: flex; flex-direction: column; justify-content: space-between;" th:each="r : ${reviews}">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="color: var(--gold-light); font-size: 1.15rem;" th:text="${r.starsDisplay}">★★★★★</span>
+                            <span th:if="${r.verified}" class="badge badge-success">Verified Client ✓</span>
+                            <span th:if="${!r.verified}" class="badge badge-gold">Public Review</span>
+                        </div>
+
+                        <!-- Polymorphic display presentation -->
+                        <div style="background: rgba(0,0,0,0.25); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 14px; font-size: 0.8rem; color: var(--gold-light);">
+                            <span th:text="${r.displayForUser(currentUser)}">Polymorphic Review String</span>
+                        </div>
+
+                        <p style="font-size: 0.93rem; color: var(--text-primary); line-height: 1.6; margin-bottom: 16px;" th:text="'&ldquo;' + ${r.comment} + '&rdquo;'"></p>
+                    </div>
+
+                    <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <strong style="color: var(--gold-light); font-size: 0.92rem;" th:text="${r.customerName}">Name</strong>
+                            <small style="color: var(--text-muted);" th:text="${r.reviewDate}"></small>
+                        </div>
+                        <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 12px;">
+                            <span th:text="${r.serviceName}">Service</span> • <span th:text="${r.stylistName}">Stylist</span>
+                        </div>
+
+                        <!-- Author or Admin Actions (Edit/Delete) -->
+                        <div th:if="${currentUser != null and (currentUser.id == r.customerId or isAdmin)}" 
+                             style="display: flex; gap: 8px; justify-content: flex-end; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 8px;">
+                            <a th:href="@{/reviews/edit/{id}(id=${r.id})}" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 4px 10px;">Edit</a>
+                            <form th:action="@{/reviews/delete/{id}(id=${r.id})}" method="POST" onsubmit="return confirm('Delete this review permanently?');">
+                                <button type="submit" class="btn btn-danger btn-sm" style="font-size: 0.75rem; padding: 4px 10px;">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

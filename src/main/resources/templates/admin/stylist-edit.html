@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit Stylist')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-panel" style="max-width: 680px;">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <span class="badge badge-gold" style="margin-bottom: 8px;">Staff Update</span>
+                    <h2>Edit Stylist Profile</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;" th:text="'Ref ID: ' + ${stylist.id} + ' — ' + ${stylist.name}"></p>
+                </div>
+
+                <form th:action="@{/admin/stylists/edit/{id}(id=${stylist.id})}" method="POST">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="editStName">Full Name</label>
+                            <input type="text" id="editStName" name="name" class="form-control" th:value="${stylist.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editStSpecialty">Specialty</label>
+                            <input type="text" id="editStSpecialty" name="specialty" class="form-control" th:value="${stylist.specialty}" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="editStEmail">Work Email</label>
+                            <input type="email" id="editStEmail" name="email" class="form-control" th:value="${stylist.email}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editStPhone">Phone</label>
+                            <input type="tel" id="editStPhone" name="phone" class="form-control" th:value="${stylist.phone}" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="editStDays">Working Days</label>
+                            <input type="text" id="editStDays" name="workingDays" class="form-control" th:value="${stylist.workingDays}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editStHours">Working Hours</label>
+                            <input type="text" id="editStHours" name="workingHours" class="form-control" th:value="${stylist.workingHours}" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="editStImg">Image URL</label>
+                            <input type="url" id="editStImg" name="imageUrl" class="form-control" th:value="${stylist.imageUrl}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editStActive">Status</label>
+                            <select id="editStActive" name="active" class="form-select">
+                                <option value="true" th:selected="${stylist.active}">Active (Available)</option>
+                                <option value="false" th:selected="${!stylist.active}">Inactive (On Leave / Former)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editStBio">Bio</label>
+                        <textarea id="editStBio" name="bio" class="form-control" rows="3" required th:text="${stylist.bio}"></textarea>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                        <a th:href="@{/admin/stylists}" class="btn btn-outline">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sign In')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-panel">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <span class="badge badge-gold" style="margin-bottom: 8px;">Salon Portal</span>
+                    <h2>Welcome to Velvet Beauty</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem;">Sign in to your client or administrative account</p>
+                </div>
+
+                <form th:action="@{/login}" method="POST">
+                    <div class="form-group">
+                        <label class="form-label" for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" name="username" class="form-control" placeholder="Enter your username" required autofocus>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" name="password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 13px; font-size: 1rem; margin-top: 10px;">
+                        Sign In to Account
+                    </button>
+                </form>
+
+                <div style="margin-top: 24px; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+                    Don't have an account yet? 
+                    <a th:href="@{/register}" style="color: var(--gold-light); font-weight: 600;">Register as a Client</a>
+                </div>
+
+                <!-- Fast Testing Presets Box -->
+                <div style="margin-top: 36px; padding: 20px; border-radius: var(--radius-md); background: rgba(0,0,0,0.3); border: 1px dashed var(--border-subtle);">
+                    <div style="font-size: 0.82rem; font-weight: 700; color: var(--gold-light); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">
+                        ⚡ Quick Demo / Evaluation Profiles:
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <button type="button" class="btn btn-outline btn-sm quick-login-btn" data-user="sophia" data-pass="sophia123">
+                            Regular: sophia
+                        </button>
+                        <button type="button" class="btn btn-outline btn-sm quick-login-btn" data-user="victoria" data-pass="vip123">
+                            VIP: victoria
+                        </button>
+                        <button type="button" class="btn btn-outline btn-sm quick-login-btn" data-user="admin" data-pass="admin123">
+                            Owner: admin
+                        </button>
+                        <button type="button" class="btn btn-outline btn-sm quick-login-btn" data-user="reception" data-pass="recep123">
+                            Recep: reception
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

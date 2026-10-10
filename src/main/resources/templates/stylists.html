@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Our Stylists')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <span class="badge badge-rose" style="margin-bottom: 8px;">Salon Masters</span>
+                <h2>Our Resident Artists &amp; Specialists</h2>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+                    World-class beauty practitioners committed to perfection, precision, and tailored client care.
+                </p>
+            </div>
+
+            <!-- Stylist Search Bar -->
+            <div class="card" style="padding: 20px; margin-bottom: 40px; max-width: 680px; margin-left: auto; margin-right: auto;">
+                <form th:action="@{/stylists}" method="GET" style="display: flex; gap: 12px;">
+                    <input type="text" name="query" class="form-control" placeholder="Search by stylist name or specialty..." th:value="${searchQuery}">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a th:href="@{/stylists}" class="btn btn-outline">Reset</a>
+                </form>
+            </div>
+
+            <div class="grid-4">
+                <div class="card" th:each="st : ${stylists}">
+                    <div class="card-img-wrap" style="height: 260px;">
+                        <img th:src="${st.imageUrl}" th:alt="${st.name}">
+                        <span class="badge badge-vip" style="position: absolute; top: 14px; left: 14px;" th:text="${st.getEmploymentType()}">TYPE</span>
+                    </div>
+
+                    <div class="card-body">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                            <h3 style="font-size: 1.25rem;" th:text="${st.name}">Stylist Name</h3>
+                            <span style="color: var(--gold-light); font-size: 0.95rem; font-weight: 700;" th:text="${st.rating} + ' ★'">5.0 ★</span>
+                        </div>
+
+                        <p style="color: var(--gold-light); font-size: 0.88rem; font-weight: 600; margin-bottom: 12px;" th:text="${st.specialty}">Specialty</p>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px; min-height: 50px;" th:text="${st.bio}">Bio</p>
+
+                        <!-- OOP Polymorphic displaySchedule() -->
+                        <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 18px; font-size: 0.82rem; border-left: 2px solid var(--rose-gold);">
+                            <strong style="color: var(--rose-gold); display: block; margin-bottom: 2px;">Working Hours:</strong>
+                            <span style="color: var(--text-secondary);" th:text="${st.displaySchedule()}">Schedule</span>
+                        </div>
+
+                        <a th:href="@{/appointments/book(stylistId=${st.id})}" class="btn btn-primary btn-sm" style="width: 100%;">
+                            ✦ Reserve with <span th:text="${st.name.split(' ')[0]}"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

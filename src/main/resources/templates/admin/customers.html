@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Customer Management')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+                <div>
+                    <span class="badge badge-gold" style="margin-bottom: 8px;">Component 01: Customer Management</span>
+                    <h2>Client Directory (users.txt)</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        View, search, upgrade, and delete customer accounts.
+                    </p>
+                </div>
+                <a th:href="@{/admin/dashboard}" class="btn btn-outline btn-sm">← Back to Dashboard</a>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="card" style="padding: 20px; margin-bottom: 30px;">
+                <form th:action="@{/admin/customers}" method="GET" style="display: flex; gap: 12px;">
+                    <input type="text" name="search" class="form-control" placeholder="Search customer by ID, username, name, or email..." th:value="${searchQuery}">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a th:href="@{/admin/customers}" class="btn btn-outline">Reset</a>
+                </form>
+            </div>
+
+            <div class="table-wrap">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Username &amp; Name</th>
+                            <th>Contact Info</th>
+                            <th>Membership Tier</th>
+                            <th>Discount Rate</th>
+                            <th>Loyalty Points</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="c : ${customers}">
+                            <td>
+                                <strong style="color: var(--gold-light);" th:text="${c.id}">CUST-001</strong>
+                            </td>
+                            <td>
+                                <div style="font-weight: 600; color: var(--text-primary);" th:text="${c.fullName}">Full Name</div>
+                                <small style="color: var(--text-muted);" th:text="'@' + ${c.username}">@user</small>
+                            </td>
+                            <td>
+                                <div th:text="${c.email}">email</div>
+                                <small style="color: var(--text-muted);" th:text="${c.phone}">phone</small>
+                            </td>
+                            <td>
+                                <span th:if="${c.membershipType == 'PREMIUM'}" class="badge badge-vip">PREMIUM VIP</span>
+                                <span th:if="${c.membershipType != 'PREMIUM'}" class="badge badge-gold">REGULAR</span>
+                            </td>
+                            <td>
+                                <strong style="color: var(--gold-light);" 
+                                        th:text="${#numbers.formatDecimal(c.getDiscountRate() * 100, 1, 0)} + '%'">5%</strong>
+                            </td>
+                            <td>
+                                <span th:text="${c.loyaltyPoints} + ' pts'">0 pts</span>
+                            </td>
+                            <td>
+                                <small th:text="${c.createdAt}">Date</small>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <!-- Upgrade / Downgrade Membership Form -->
+                                    <form th:action="@{/admin/customers/upgrade/{id}(id=${c.id})}" method="POST">
+                                        <input type="hidden" name="membershipType" 
+                                               th:value="${c.membershipType == 'PREMIUM' ? 'REGULAR' : 'PREMIUM'}">
+                                        <button type="submit" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 4px 8px;"
+                                                th:text="${c.membershipType == 'PREMIUM' ? 'Demote to Regular' : '★ Upgrade to VIP'}">
+                                            Toggle Tier
+                                        </button>
+                                    </form>
+
+                                    <!-- Delete Customer Form -->
+                                    <form th:action="@{/admin/customers/delete/{id}(id=${c.id})}" method="POST"
+                                          onsubmit="return confirm('Permanently remove this customer from users.txt?');">
+                                        <button type="submit" class="btn btn-danger btn-sm" style="font-size: 0.75rem; padding: 4px 8px;">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

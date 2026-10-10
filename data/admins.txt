@@ -1,0 +1,2 @@
+ADM-001;;admin;;admin123;;Giselle Dupont;;owner@velvetbeauty.com;;+1 555-0101;;2026-01-10 09:00;;SALON_OWNER;;Executive Suite
+ADM-002;;reception;;recep123;;Chloe Bennett;;frontdesk@velvetbeauty.com;;+1 555-0102;;2026-02-15 08:30;;RECEPTIONIST;;Front Desk & Concierge

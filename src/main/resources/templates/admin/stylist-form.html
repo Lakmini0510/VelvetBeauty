@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Register Stylist')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-panel" style="max-width: 680px;">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <span class="badge badge-gold" style="margin-bottom: 8px;">Stylist Management</span>
+                    <h2>Register New Stylist</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        Adds a new hair, skin, or nail specialist to stylists.txt.
+                    </p>
+                </div>
+
+                <form th:action="@{/admin/stylists/new}" method="POST">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="stName">Full Name</label>
+                            <input type="text" id="stName" name="name" class="form-control" placeholder="e.g. Julian Vance" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="stSpecialty">Specialty</label>
+                            <input type="text" id="stSpecialty" name="specialty" class="form-control" placeholder="e.g. Master Balayage Specialist" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="stEmail">Work Email</label>
+                            <input type="email" id="stEmail" name="email" class="form-control" placeholder="julian@velvetbeauty.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="stPhone">Phone</label>
+                            <input type="tel" id="stPhone" name="phone" class="form-control" placeholder="+1 555-0309" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="stDays">Working Days</label>
+                            <input type="text" id="stDays" name="workingDays" class="form-control" value="Monday, Wednesday, Friday, Saturday" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="stHours">Working Hours</label>
+                            <input type="text" id="stHours" name="workingHours" class="form-control" value="09:00 - 18:00" required>
+                        </div>
+                    </div>
+
+                    <!-- Employment Agreement (Polymorphism) -->
+                    <div class="form-group">
+                        <label class="form-label" for="stType">Employment Agreement</label>
+                        <select id="stType" name="type" class="form-select" required>
+                            <option value="FULL_TIME">Full-Time Resident (Fixed Monthly Salary + Bonus)</option>
+                            <option value="PART_TIME">Part-Time Associate (Hourly Wage + Service Commission)</option>
+                        </select>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="stRate">Fixed Salary ($/mo) OR Hourly Wage ($/hr)</label>
+                            <input type="number" id="stRate" name="rateOrSalary" class="form-control" value="3800.0" step="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="stComm">Commission or Bonus Rate (e.g. 0.08 = 8%)</label>
+                            <input type="number" id="stComm" name="commissionOrBonus" class="form-control" value="0.08" step="0.01" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="stExtra">Benefits Package OR Weekly Hours Limit</label>
+                        <input type="text" id="stExtra" name="extraParam" class="form-control" placeholder="e.g. Full Medical & 401(k) OR 24">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="stImg">Avatar Image URL</label>
+                        <input type="url" id="stImg" name="imageUrl" class="form-control" 
+                               value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="stBio">Professional Biography</label>
+                        <textarea id="stBio" name="bio" class="form-control" rows="3" placeholder="Brief background of artistic training, techniques, and awards..." required></textarea>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                        <a th:href="@{/admin/stylists}" class="btn btn-outline">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save to stylists.txt</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

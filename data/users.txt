@@ -1,0 +1,5 @@
+CUST-001;;sophia;;sophia123;;Sophia Miller;;sophia@example.com;;+1 555-0201;;2026-03-01 10:00;;REGULAR;;35
+CUST-002;;emma;;emma123;;Emma Watson;;emma@example.com;;+1 555-0202;;2026-03-12 11:15;;REGULAR;;15
+CUST-003;;victoria;;vip123;;Victoria Sterling;;victoria@luxury.com;;+1 555-0203;;2026-02-20 14:20;;PREMIUM;;320;;DIAMOND
+CUST-4233D74E;;Ann;;123;;ann aa;;wasanalakmini@gmail.com;;1234567812;;2026-10-07 17:48;;REGULAR;;20
+CUST-02DACA51;;vbn;;123;;Wasana Lakmini;;wasanalakmini471@gmail.com;;076930524;;2026-10-12 15:23;;REGULAR;;20

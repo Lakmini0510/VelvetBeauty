@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Manage Stylists')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+                <div>
+                    <span class="badge badge-gold" style="margin-bottom: 8px;">Component 04: Stylist Management</span>
+                    <h2>Stylist &amp; Staff Roster (stylists.txt)</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        Oversee staff profiles, working schedules, and polymorphic compensation calculations.
+                    </p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <a th:href="@{/admin/stylists/new}" class="btn btn-primary btn-sm">+ Register New Stylist</a>
+                    <a th:href="@{/admin/dashboard}" class="btn btn-outline btn-sm">Dashboard</a>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Stylist</th>
+                            <th>Specialty</th>
+                            <th>Employment Type</th>
+                            <th>Schedule &amp; Hours (displaySchedule)</th>
+                            <th>Compensation Structure</th>
+                            <th>Projected Monthly Pay (20 Appts / $3k Rev)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="st : ${stylists}">
+                            <td>
+                                <strong style="color: var(--gold-light);" th:text="${st.name}">Name</strong>
+                                <small style="display: block; color: var(--text-muted);" th:text="${st.email}"></small>
+                            </td>
+                            <td>
+                                <span th:text="${st.specialty}">Hair</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-vip" th:if="${st.employmentType.contains('Full-Time')}">FULL-TIME RESIDENT</span>
+                                <span class="badge badge-gold" th:if="${!st.employmentType.contains('Full-Time')}">PART-TIME ASSOCIATE</span>
+                            </td>
+                            <td>
+                                <small style="color: var(--text-secondary); display: block; max-width: 250px;" th:text="${st.displaySchedule()}"></small>
+                            </td>
+                            <td>
+                                <div th:if="${st instanceof T(com.salon.VelvetBeauty.model.FullTimeStylist)}">
+                                    <small style="color: var(--gold-light);">Fixed: $<span th:text="${#numbers.formatDecimal(st.monthlyFixedSalary, 1, 0)}"></span>/mo</small><br>
+                                    <small style="color: var(--rose-gold);">Bonus: <span th:text="${#numbers.formatDecimal(st.performanceBonusRate * 100, 1, 0)}"></span>% rev</small>
+                                </div>
+                                <div th:if="${st instanceof T(com.salon.VelvetBeauty.model.PartTimeStylist)}">
+                                    <small style="color: var(--gold-light);">Wage: $<span th:text="${#numbers.formatDecimal(st.hourlyRate, 1, 0)}"></span>/hr</small><br>
+                                    <small style="color: var(--rose-gold);">Comm: <span th:text="${#numbers.formatDecimal(st.serviceCommissionRate * 100, 1, 0)}"></span>% rev</small>
+                                </div>
+                            </td>
+                            <td>
+                                <!-- OOP Polymorphic calculateMonthlyCompensation(20, 3000.0) -->
+                                <strong style="color: var(--status-success); font-size: 1.05rem;" 
+                                        th:text="'$' + ${#numbers.formatDecimal(st.calculateMonthlyCompensation(20, 3000.0), 1, 2)}">
+                                    $0.00
+                                </strong>
+                            </td>
+                            <td>
+                                <span th:if="${st.active}" class="badge badge-success">ACTIVE</span>
+                                <span th:if="${!st.active}" class="badge badge-danger">INACTIVE</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <a th:href="@{/admin/stylists/edit/{id}(id=${st.id})}" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 4px 8px;">
+                                        Edit
+                                    </a>
+                                    <form th:action="@{/admin/stylists/delete/{id}(id=${st.id})}" method="POST"
+                                          onsubmit="return confirm('Remove stylist from stylists.txt?');">
+                                        <button type="submit" class="btn btn-danger btn-sm" style="font-size: 0.75rem; padding: 4px 8px;">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Manage Services')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+                <div>
+                    <span class="badge badge-gold" style="margin-bottom: 8px;">Component 02: Service Management</span>
+                    <h2>Service Catalog (services.txt)</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        Maintain salon treatments, prices, protocols, and category customizations.
+                    </p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <a th:href="@{/admin/services/new}" class="btn btn-primary btn-sm">+ Add New Service</a>
+                    <a th:href="@{/admin/dashboard}" class="btn btn-outline btn-sm">Dashboard</a>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Service ID</th>
+                            <th>Treatment Name</th>
+                            <th>Category</th>
+                            <th>Base Price</th>
+                            <th>Duration</th>
+                            <th>Protocol / Polymorphic Details</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s : ${services}">
+                            <td>
+                                <strong style="color: var(--gold-light);" th:text="${s.id}">SRV-01</strong>
+                            </td>
+                            <td>
+                                <div style="font-weight: 600; color: var(--text-primary);" th:text="${s.name}">Name</div>
+                                <small style="color: var(--text-muted); display: block; max-width: 250px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" 
+                                       th:text="${s.description}"></small>
+                            </td>
+                            <td>
+                                <span class="badge badge-gold" th:text="${s.category}">CAT</span>
+                            </td>
+                            <td>
+                                <strong style="color: var(--gold-light);" th:text="'$' + ${#numbers.formatDecimal(s.basePrice, 1, 2)}">$0.00</strong>
+                            </td>
+                            <td>
+                                <span th:text="${s.durationMinutes} + ' min'">0 min</span>
+                            </td>
+                            <td>
+                                <small style="color: var(--text-secondary); display: block; max-width: 280px;" th:text="${s.displayDetails()}"></small>
+                            </td>
+                            <td>
+                                <span th:if="${s.active}" class="badge badge-success">ACTIVE</span>
+                                <span th:if="${!s.active}" class="badge badge-danger">INACTIVE</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <a th:href="@{/admin/services/edit/{id}(id=${s.id})}" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 4px 8px;">
+                                        Edit
+                                    </a>
+                                    <form th:action="@{/admin/services/delete/{id}(id=${s.id})}" method="POST"
+                                          onsubmit="return confirm('Delete service from services.txt?');">
+                                        <button type="submit" class="btn btn-danger btn-sm" style="font-size: 0.75rem; padding: 4px 8px;">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

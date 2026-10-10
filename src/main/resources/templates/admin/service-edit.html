@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit Service')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-panel" style="max-width: 680px;">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <span class="badge badge-gold" style="margin-bottom: 8px;">Service Update</span>
+                    <h2>Edit Service</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;" th:text="'Ref ID: ' + ${service.id} + ' (' + ${service.category} + ')'"></p>
+                </div>
+
+                <form th:action="@{/admin/services/edit/{id}(id=${service.id})}" method="POST">
+                    <div class="form-group">
+                        <label class="form-label" for="editSrvName">Service Name</label>
+                        <input type="text" id="editSrvName" name="name" class="form-control" th:value="${service.name}" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="editSrvPrice">Base Price ($)</label>
+                            <input type="number" id="editSrvPrice" name="basePrice" class="form-control" th:value="${service.basePrice}" step="0.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editSrvDuration">Duration (Mins)</label>
+                            <input type="number" id="editSrvDuration" name="durationMinutes" class="form-control" th:value="${service.durationMinutes}" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="editSrvCustom">Category Customization Setting</label>
+                            <input type="text" id="editSrvCustom" name="customProp" class="form-control" 
+                                   th:value="${service instanceof T(com.salon.VelvetBeauty.model.HairService) ? service.defaultHairLength : (service instanceof T(com.salon.VelvetBeauty.model.SkinService) ? service.recommendedSkinType : (service instanceof T(com.salon.VelvetBeauty.model.NailService) ? service.defaultFinish : ''))}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="editSrvActive">Status</label>
+                            <select id="editSrvActive" name="active" class="form-select">
+                                <option value="true" th:selected="${service.active}">Active (Visible)</option>
+                                <option value="false" th:selected="${!service.active}">Inactive (Hidden)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editSrvImg">Image URL</label>
+                        <input type="url" id="editSrvImg" name="imageUrl" class="form-control" th:value="${service.imageUrl}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editSrvDesc">Description</label>
+                        <textarea id="editSrvDesc" name="description" class="form-control" rows="3" required th:text="${service.description}"></textarea>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                        <a th:href="@{/admin/services}" class="btn btn-outline">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Update Service</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

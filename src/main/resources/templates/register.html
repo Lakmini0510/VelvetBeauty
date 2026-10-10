@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Register')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-panel" style="max-width: 680px;">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <span class="badge badge-rose" style="margin-bottom: 8px;">Client Registration</span>
+                    <h2>Join the Velvet Beauty Circle</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem;">Select your membership tier and create your salon account</p>
+                </div>
+
+                <form th:action="@{/register}" method="POST">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="regUsername">Username</label>
+                            <input type="text" id="regUsername" name="username" class="form-control" placeholder="e.g. clara_rose" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="regPassword">Password</label>
+                            <input type="password" id="regPassword" name="password" class="form-control" placeholder="Secure password" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="regFullName">Full Legal Name</label>
+                        <input type="text" id="regFullName" name="fullName" class="form-control" placeholder="e.g. Clara Roselyn" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="regEmail">Email Address</label>
+                            <input type="email" id="regEmail" name="email" class="form-control" placeholder="clara@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="regPhone">Phone Number</label>
+                            <input type="tel" id="regPhone" name="phone" class="form-control" placeholder="+1 (555) 012-3456" required>
+                        </div>
+                    </div>
+
+                    <!-- Membership Tier Selector (OOP Demonstration) -->
+                    <div class="form-group">
+                        <label class="form-label" style="margin-bottom: 12px;">Choose Membership Tier</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <label style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px; cursor: pointer; display: block; background: rgba(0,0,0,0.25);">
+                                <input type="radio" name="membershipType" value="REGULAR" checked style="margin-right: 8px;">
+                                <strong style="color: var(--gold-light);">Regular Client</strong>
+                                <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 6px;">
+                                    5% Discount on all services. Free cancellation up to 24 hours ($15 late fee).
+                                </p>
+                            </label>
+
+                            <label style="border: 1px solid rgba(223, 158, 82, 0.6); border-radius: var(--radius-md); padding: 18px; cursor: pointer; display: block; background: rgba(223, 158, 82, 0.08);">
+                                <input type="radio" name="membershipType" value="PREMIUM" style="margin-right: 8px;">
+                                <strong style="color: var(--rose-gold);">Premium VIP</strong>
+                                <p style="color: var(--text-secondary); font-size: 0.82rem; margin-top: 6px;">
+                                    <strong>20% VIP Discount</strong>. 100% Free Cancellation Guarantee anytime. Priority matching.
+                                </p>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 13px; font-size: 1rem; margin-top: 10px;">
+                        Complete Registration &amp; Enter Atelier
+                    </button>
+                </form>
+
+                <div style="margin-top: 24px; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+                    Already registered? 
+                    <a th:href="@{/login}" style="color: var(--gold-light); font-weight: 600;">Sign In Here</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

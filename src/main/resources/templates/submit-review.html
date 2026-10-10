@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Submit Review')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-panel" style="max-width: 640px;">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <span class="badge badge-rose" style="margin-bottom: 8px;">Salon Experience</span>
+                    <h2>Share Your Salon Review</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        Your feedback helps us continuously elevate our beauty rituals.
+                    </p>
+                </div>
+
+                <form th:action="@{/reviews/new}" method="POST">
+                    
+                    <!-- Link to Completed Appointment if available -->
+                    <div class="form-group" th:if="${!#lists.isEmpty(completedAppointments)}">
+                        <label class="form-label" for="reviewApptSelect">
+                            ✦ Link to Completed Appointment (Grants "Verified Client ✓" Badge)
+                        </label>
+                        <select id="reviewApptSelect" name="appointmentId" class="form-select">
+                            <option value="">-- No specific appointment / General Public Review --</option>
+                            <option th:each="ca : ${completedAppointments}" 
+                                    th:value="${ca.id}" 
+                                    th:text="'Appt Ref #' + ${ca.id} + ' — ' + ${ca.serviceName} + ' with ' + ${ca.stylistName} + ' on ' + ${ca.appointmentDate}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Service Selection -->
+                    <div class="form-group">
+                        <label class="form-label" for="reviewServiceSelect">Select Service Reviewed</label>
+                        <select id="reviewServiceSelect" name="serviceId" class="form-select" required>
+                            <option value="" disabled selected>-- Choose Service --</option>
+                            <option th:each="s : ${services}" th:value="${s.id}" th:text="${s.name}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Stylist Selection -->
+                    <div class="form-group">
+                        <label class="form-label" for="reviewStylistSelect">Select Stylist Reviewed</label>
+                        <select id="reviewStylistSelect" name="stylistId" class="form-select" required>
+                            <option value="" disabled selected>-- Choose Stylist --</option>
+                            <option th:each="st : ${stylists}" th:value="${st.id}" th:text="${st.name} + ' (' + ${st.specialty} + ')'"></option>
+                        </select>
+                    </div>
+
+                    <!-- Star Rating (1-5) -->
+                    <div class="form-group">
+                        <label class="form-label" for="reviewRating">Star Rating (1 to 5 Stars)</label>
+                        <select id="reviewRating" name="rating" class="form-select" required>
+                            <option value="5" selected>★★★★★ - Exceptional (5/5)</option>
+                            <option value="4">★★★★☆ - Very Good (4/5)</option>
+                            <option value="3">★★★☆☆ - Average (3/5)</option>
+                            <option value="2">★★☆☆☆ - Needs Improvement (2/5)</option>
+                            <option value="1">★☆☆☆☆ - Unsatisfactory (1/5)</option>
+                        </select>
+                    </div>
+
+                    <!-- Comment -->
+                    <div class="form-group">
+                        <label class="form-label" for="reviewComment">Your Feedback &amp; Impressions</label>
+                        <textarea id="reviewComment" name="comment" class="form-control" rows="4" 
+                                  placeholder="Describe the treatment, stylist attentiveness, results, and salon ambiance..." required></textarea>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                        <a th:href="@{/reviews}" class="btn btn-outline">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Publish Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

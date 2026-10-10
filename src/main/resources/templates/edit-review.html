@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit Review')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-panel" style="max-width: 600px;">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <span class="badge badge-gold" style="margin-bottom: 8px;">Edit Testimonial</span>
+                    <h2>Update Your Feedback</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;" 
+                       th:text="'Reviewing ' + ${review.serviceName} + ' with ' + ${review.stylistName}">
+                    </p>
+                </div>
+
+                <form th:action="@{/reviews/edit/{id}(id=${review.id})}" method="POST">
+                    <div class="form-group">
+                        <label class="form-label" for="editRating">Rating</label>
+                        <select id="editRating" name="rating" class="form-select" required>
+                            <option value="5" th:selected="${review.rating == 5}">★★★★★ - 5 Stars</option>
+                            <option value="4" th:selected="${review.rating == 4}">★★★★☆ - 4 Stars</option>
+                            <option value="3" th:selected="${review.rating == 3}">★★★☆☆ - 3 Stars</option>
+                            <option value="2" th:selected="${review.rating == 2}">★★☆☆☆ - 2 Stars</option>
+                            <option value="1" th:selected="${review.rating == 1}">★☆☆☆☆ - 1 Star</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editComment">Comment</label>
+                        <textarea id="editComment" name="comment" class="form-control" rows="4" required 
+                                  th:text="${review.comment}"></textarea>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                        <a th:href="@{/reviews}" class="btn btn-outline">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

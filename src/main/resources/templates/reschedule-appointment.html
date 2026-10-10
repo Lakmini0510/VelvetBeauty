@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reschedule Appointment')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-panel" style="max-width: 600px;">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <span class="badge badge-gold" style="margin-bottom: 8px;">Appointment Update</span>
+                    <h2>Reschedule Appointment</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;" 
+                       th:text="'Ref #' + ${appointment.id} + ' — ' + ${appointment.serviceName} + ' with ' + ${appointment.stylistName}">
+                    </p>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 24px; font-size: 0.88rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="color: var(--text-muted);">Current Date &amp; Time:</span>
+                        <strong style="color: var(--gold-light);" th:text="${appointment.appointmentDate} + ' at ' + ${appointment.timeSlot}"></strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Stylist Assigned:</span>
+                        <span style="color: var(--text-primary);" th:text="${appointment.stylistName}"></span>
+                    </div>
+                </div>
+
+                <form th:action="@{/appointments/reschedule/{id}(id=${appointment.id})}" method="POST">
+                    <input type="hidden" id="bookingStylistSelect" th:value="${appointment.stylistId}">
+
+                    <div class="form-group">
+                        <label class="form-label" for="bookingDateInput">Select New Date</label>
+                        <input type="date" id="bookingDateInput" name="newDate" class="form-control" 
+                               th:value="${appointment.appointmentDate}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="bookingTimeSlotSelect">Select New Time Slot</label>
+                        <select id="bookingTimeSlotSelect" name="newTimeSlot" class="form-select" required>
+                            <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot}"
+                                    th:selected="${slot == appointment.timeSlot}"></option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                        <a th:href="@{/appointments/my}" class="btn btn-outline">Keep Original Time</a>
+                        <button type="submit" class="btn btn-primary">Confirm Reschedule</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

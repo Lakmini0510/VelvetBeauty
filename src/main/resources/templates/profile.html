@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Client Profile')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 32px; max-width: 1040px; margin: 0 auto;">
+                
+                <!-- Left: Membership & Perks Card -->
+                <div>
+                    <div class="card" style="padding: 28px; text-align: center; margin-bottom: 24px;">
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--gold-gradient); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 16px; color: #120e17; font-weight: 700;">
+                            <span th:text="${customer.fullName != null ? customer.fullName.substring(0, 1) : 'U'}">U</span>
+                        </div>
+                        <h3 style="margin-bottom: 6px;" th:text="${customer.fullName}">User Full Name</h3>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;" th:text="'Client ID: ' + ${customer.id}">ID</p>
+
+                        <div th:if="${customer.membershipType == 'PREMIUM'}" class="badge badge-vip" style="margin-bottom: 16px;">
+                            VIP DIAMOND TIER
+                        </div>
+                        <div th:if="${customer.membershipType != 'PREMIUM'}" class="badge badge-gold" style="margin-bottom: 16px;">
+                            REGULAR MEMBER
+                        </div>
+
+                        <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 14px; text-align: left; font-size: 0.85rem; margin-bottom: 16px;">
+                            <strong style="color: var(--gold-light); display: block; margin-bottom: 4px;">Membership Policy:</strong>
+                            <p style="color: var(--text-secondary);" th:text="${customer.getMembershipPerks()}"></p>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-around; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px;">
+                            <div>
+                                <small style="color: var(--text-muted); display: block;">Discount Rate</small>
+                                <strong style="color: var(--gold-light); font-size: 1.1rem;" th:text="${#numbers.formatDecimal(customer.getDiscountRate() * 100, 1, 0)} + '%'">5%</strong>
+                            </div>
+                            <div>
+                                <small style="color: var(--text-muted); display: block;">Loyalty Points</small>
+                                <strong style="color: var(--rose-gold); font-size: 1.1rem;" th:text="${customer.loyaltyPoints} + ' pts'">20 pts</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 20px;">
+                        <h4 style="font-size: 1rem; margin-bottom: 10px; color: var(--gold-light);">Need an Appointment?</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 14px;">Book in seconds with your stylist and enjoy instant discount deductions.</p>
+                        <a th:href="@{/appointments/book}" class="btn btn-primary btn-sm" style="width: 100%;">Book New Reservation</a>
+                    </div>
+                </div>
+
+                <!-- Right: Profile Edit Form -->
+                <div>
+                    <div class="card" style="padding: 32px;">
+                        <h3 style="margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">Edit Profile &amp; Preferences</h3>
+
+                        <form th:action="@{/profile/update}" method="POST">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="form-group">
+                                    <label class="form-label">Username (Immutable)</label>
+                                    <input type="text" class="form-control" th:value="${customer.username}" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Client Role</label>
+                                    <input type="text" class="form-control" th:value="${customer.getRoleDescription()}" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="profEmail">Email Address</label>
+                                <input type="email" id="profEmail" name="email" class="form-control" th:value="${customer.email}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="profPhone">Phone Number</label>
+                                <input type="tel" id="profPhone" name="phone" class="form-control" th:value="${customer.phone}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="profPassword">New Password (leave empty to keep current)</label>
+                                <input type="password" id="profPassword" name="password" class="form-control" placeholder="••••••••">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="profMembership">Membership Plan Upgrade</label>
+                                <select id="profMembership" name="membershipType" class="form-select">
+                                    <option value="REGULAR" th:selected="${customer.membershipType == 'REGULAR'}">Regular Member (5% Off)</option>
+                                    <option value="PREMIUM" th:selected="${customer.membershipType == 'PREMIUM'}">★ Premium VIP Member (20% Off + Free Cancellation Guarantee)</option>
+                                </select>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                                <a th:href="@{/appointments/my}" class="btn btn-outline">View My Appointments</a>
+                                <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

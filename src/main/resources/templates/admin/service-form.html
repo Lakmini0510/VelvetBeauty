@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Add New Service')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-panel" style="max-width: 680px;">
+                <div style="text-align: center; margin-bottom: 28px;">
+                    <span class="badge badge-gold" style="margin-bottom: 8px;">Service Management</span>
+                    <h2>Add New Salon Service</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        Registers a new treatment into services.txt with category-specific polymorphic options.
+                    </p>
+                </div>
+
+                <form th:action="@{/admin/services/new}" method="POST">
+                    <div class="form-group">
+                        <label class="form-label" for="srvName">Service / Treatment Name</label>
+                        <input type="text" id="srvName" name="name" class="form-control" placeholder="e.g. Diamond Microdermabrasion" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="srvCategory">Category</label>
+                            <select id="srvCategory" name="category" class="form-select" required>
+                                <option value="HAIR">Hair Service (Length Surcharge)</option>
+                                <option value="SKIN">Skin Service (Serum Surcharge)</option>
+                                <option value="NAIL">Nail Service (Finish Surcharge)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="srvDuration">Duration (Minutes)</label>
+                            <input type="number" id="srvDuration" name="durationMinutes" class="form-control" value="60" min="15" step="5" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label" for="srvPrice">Base Price ($ USD)</label>
+                            <input type="number" id="srvPrice" name="basePrice" class="form-control" value="85.00" min="5" step="0.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="srvCustomProp">Category Sub-Type / Recommendation</label>
+                            <input type="text" id="srvCustomProp" name="customProp" class="form-control" placeholder="e.g. All Types or Medium or Gel">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="srvImg">Image URL</label>
+                        <input type="url" id="srvImg" name="imageUrl" class="form-control" 
+                               value="https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=600&q=80">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="srvDesc">Description &amp; Protocol Notes</label>
+                        <textarea id="srvDesc" name="description" class="form-control" rows="3" placeholder="Explain the treatment steps, botanical products, and benefits..." required></textarea>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                        <a th:href="@{/admin/services}" class="btn btn-outline">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save to services.txt</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>
