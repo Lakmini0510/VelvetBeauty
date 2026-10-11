@@ -42,11 +42,11 @@ public class SkinService extends SalonService {
         if (opt.contains("standard")) {
             return getBasePrice();
         } else if (opt.contains("organic herbal")) {
-            return getBasePrice() + 15.0; // +$15
+            return getBasePrice() + 4500.0; // +Rs. 4500
         } else if (opt.contains("hyaluronic")) {
-            return getBasePrice() + 25.0; // +$25
+            return getBasePrice() + 7500.0; // +Rs. 7500
         } else if (opt.contains("24k gold")) {
-            return getBasePrice() + 45.0; // +$45
+            return getBasePrice() + 13500.0; // +Rs. 13500
         }
         return getBasePrice();
     }
@@ -58,7 +58,7 @@ public class SkinService extends SalonService {
 
     @Override
     public List<String> getAvailableCustomizations() {
-        return Arrays.asList("Standard Hydrating (Included)", "Organic Herbal Elixir (+ $15.00)", "Hyaluronic Glass Skin (+ $25.00)", "24K Gold Luxury Radiance (+ $45.00)");
+        return Arrays.asList("Standard Hydrating (Included)", "Organic Herbal Elixir (+ Rs. 4500.00)", "Hyaluronic Glass Skin (+ Rs. 7500.00)", "24K Gold Luxury Radiance (+ Rs. 13500.00)");
     }
 
     @Override

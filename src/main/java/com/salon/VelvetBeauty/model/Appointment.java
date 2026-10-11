@@ -262,7 +262,7 @@ public class Appointment {
             this.cancellationFee = customer.calculateCancellationFee(this.finalPrice, hoursRemaining);
         } else {
             // Default policy if customer object not resolved
-            this.cancellationFee = (hoursRemaining < 24) ? 15.0 : 0.0;
+            this.cancellationFee = (hoursRemaining < 24) ? 4500.0 : 0.0;
         }
     }
 

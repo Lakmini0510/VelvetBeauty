@@ -4,3 +4,5 @@ LOG-BB4B0848;;admin;;LOGIN;;Logged into administrative console;;2026-10-07 17:52
 LOG-247653F1;;admin;;LOGOUT;;Admin logged out;;2026-10-07 17:52:14
 LOG-FD9D6FE8;;admin;;LOGIN;;Logged into administrative console;;2026-10-07 17:52:33
 LOG-1AF22229;;admin;;LOGIN;;Logged into administrative console;;2026-10-08 01:23:46
+LOG-47731B59;;reception;;LOGIN;;Logged into administrative console;;2026-10-14 16:39:09
+LOG-B0EA06A3;;reception;;LOGOUT;;Admin logged out;;2026-10-14 16:39:26

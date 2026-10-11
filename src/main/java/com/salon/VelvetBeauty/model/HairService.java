@@ -42,11 +42,11 @@ public class HairService extends SalonService {
         if (opt.contains("short")) {
             return getBasePrice(); // No surcharge
         } else if (opt.contains("medium")) {
-            return getBasePrice() + 10.0; // +$10
+            return getBasePrice() + 3000.0; // +Rs. 3000
         } else if (opt.contains("extra long")) {
-            return getBasePrice() + 35.0; // +$35
+            return getBasePrice() + 10500.0; // +Rs. 10500
         } else if (opt.contains("long")) {
-            return getBasePrice() + 20.0; // +$20
+            return getBasePrice() + 6000.0; // +Rs. 6000
         }
         return getBasePrice();
     }
@@ -58,7 +58,7 @@ public class HairService extends SalonService {
 
     @Override
     public List<String> getAvailableCustomizations() {
-        return Arrays.asList("Short (Standard)", "Medium (+ $10.00)", "Long (+ $20.00)", "Extra Long (+ $35.00)");
+        return Arrays.asList("Short (Standard)", "Medium (+ Rs. 3000.00)", "Long (+ Rs. 6000.00)", "Extra Long (+ Rs. 10500.00)");
     }
 
     @Override

@@ -11,7 +11,7 @@ public class PartTimeStylist extends Stylist {
 
     public PartTimeStylist() {
         super();
-        this.hourlyRate = 28.0;
+        this.hourlyRate = 8400.0;
         this.weeklyHours = 20;
         this.serviceCommissionRate = 0.20;
     }

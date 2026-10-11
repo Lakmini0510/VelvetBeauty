@@ -42,11 +42,11 @@ public class NailService extends SalonService {
         if (opt.contains("classic")) {
             return getBasePrice();
         } else if (opt.contains("gel")) {
-            return getBasePrice() + 12.0; // +$12
+            return getBasePrice() + 3600.0; // +Rs. 3600
         } else if (opt.contains("acrylic")) {
-            return getBasePrice() + 25.0; // +$25
+            return getBasePrice() + 7500.0; // +Rs. 7500
         } else if (opt.contains("nail art") || opt.contains("art")) {
-            return getBasePrice() + 35.0; // +$35
+            return getBasePrice() + 10500.0; // +Rs. 10500
         }
         return getBasePrice();
     }
@@ -58,7 +58,7 @@ public class NailService extends SalonService {
 
     @Override
     public List<String> getAvailableCustomizations() {
-        return Arrays.asList("Classic High-Gloss (Included)", "Long-Wear Gel Polish (+ $12.00)", "Acrylic Sculpted Extensions (+ $25.00)", "Hand-Painted Designer Nail Art (+ $35.00)");
+        return Arrays.asList("Classic High-Gloss (Included)", "Long-Wear Gel Polish (+ Rs. 3600.00)", "Acrylic Sculpted Extensions (+ Rs. 7500.00)", "Hand-Painted Designer Nail Art (+ Rs. 10500.00)");
     }
 
     @Override

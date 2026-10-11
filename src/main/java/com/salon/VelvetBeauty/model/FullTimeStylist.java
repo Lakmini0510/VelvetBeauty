@@ -11,7 +11,7 @@ public class FullTimeStylist extends Stylist {
 
     public FullTimeStylist() {
         super();
-        this.monthlyFixedSalary = 3800.0;
+        this.monthlyFixedSalary = 1140000.0;
         this.performanceBonusRate = 0.08;
         this.benefitsPackage = "Comprehensive Health Insurance, 401k Matching, Paid Vacation";
     }

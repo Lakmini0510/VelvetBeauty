@@ -29,16 +29,16 @@ public class RegularCustomer extends Customer {
 
     @Override
     public double calculateCancellationFee(double appointmentPrice, long hoursBeforeAppointment) {
-        // Regular customers incur a $15 cancellation fee if cancelled within 24 hours
+        // Regular customers incur a Rs. 4500 cancellation fee if cancelled within 24 hours
         if (hoursBeforeAppointment < 24) {
-            return 15.00;
+            return 4500.00;
         }
         return 0.00;
     }
 
     @Override
     public String getMembershipPerks() {
-        return "Standard Salon Booking, 5% Seasonal Discount, Standard Cancellation (Free >24h, $15 if <24h)";
+        return "Standard Salon Booking, 5% Seasonal Discount, Standard Cancellation (Free >24h, Rs. 4500 if <24h)";
     }
 
     @Override

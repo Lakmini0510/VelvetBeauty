@@ -91,13 +91,13 @@ public class DataInitializer implements CommandLineRunner {
         if (serviceRepository.findAll().isEmpty()) {
             // Hair Services
             serviceRepository.save(new HairService(
-                    "SRV-001", "Signature Balayage & Blowout", 145.0, 90, 
+                    "SRV-001", "Signature Balayage & Blowout", 43500.0, 90, 
                     "Hand-painted luminous dimension with luxury gloss toner and styling blowout.",
                     "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=600&q=80",
                     true, "Long"
             ));
             serviceRepository.save(new HairService(
-                    "SRV-002", "Botanical Keratin Smoothing", 95.0, 60, 
+                    "SRV-002", "Botanical Keratin Smoothing", 28500.0, 60, 
                     "Organic amino-acid infusion eliminating frizz while protecting hair integrity.",
                     "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80",
                     true, "Medium"
@@ -105,13 +105,13 @@ public class DataInitializer implements CommandLineRunner {
 
             // Skin Services
             serviceRepository.save(new SkinService(
-                    "SRV-003", "24K Gold Cellular Glow Facial", 130.0, 75, 
+                    "SRV-003", "24K Gold Cellular Glow Facial", 39000.0, 75, 
                     "Regenerative ultrasonic therapy enriched with pure 24K gold foil and stem cells.",
                     "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=600&q=80",
                     true, "All Types"
             ));
             serviceRepository.save(new SkinService(
-                    "SRV-004", "Deep Pore Clarifying Hydro-Peel", 85.0, 50, 
+                    "SRV-004", "Deep Pore Clarifying Hydro-Peel", 25500.0, 50, 
                     "Vacuum vortex extraction infused with salicylic acid and tea tree soothing mist.",
                     "https://images.unsplash.com/photo-1512290900672-1f413344b584?auto=format&fit=crop&w=600&q=80",
                     true, "Oily & Acne-Prone"
@@ -119,13 +119,13 @@ public class DataInitializer implements CommandLineRunner {
 
             // Nail Services
             serviceRepository.save(new NailService(
-                    "SRV-005", "Velvet Luxe Gel Manicure", 55.0, 45, 
+                    "SRV-005", "Velvet Luxe Gel Manicure", 16500.0, 45, 
                     "Russian cuticle prep, non-toxic Japanese gel overlay, and shea butter hot towel massage.",
                     "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=600&q=80",
                     true, "Gel"
             ));
             serviceRepository.save(new NailService(
-                    "SRV-006", "Aromatherapy Spa Pedicure", 70.0, 60, 
+                    "SRV-006", "Aromatherapy Spa Pedicure", 21000.0, 60, 
                     "Himalayan pink salt soak, eucalyptus mask, volcanic stone reflexology massage.",
                     "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=600&q=80",
                     true, "Classic"
@@ -142,7 +142,7 @@ public class DataInitializer implements CommandLineRunner {
                     "+1 555-0301", "elena@velvetbeauty.com", 
                     "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=500&q=80", 
                     "12 years experience in Paris and Milan fashion week runway hair design.", 
-                    4.9, true, 4200.0, 0.08, "Executive Medical, Paid Retreat, Product Stipend"
+                    4.9, true, 1260000.0, 0.08, "Executive Medical, Paid Retreat, Product Stipend"
             ));
             stylistRepository.save(new FullTimeStylist(
                     "STY-002", "Camille Laurent", "Senior Dermal Esthetician", 
@@ -150,7 +150,7 @@ public class DataInitializer implements CommandLineRunner {
                     "+1 555-0302", "camille@velvetbeauty.com", 
                     "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80", 
                     "Board-certified skin therapist specializing in non-invasive glass skin rituals.", 
-                    5.0, true, 3900.0, 0.08, "Full Medical, Dental & Continuing Education Grant"
+                    5.0, true, 1170000.0, 0.08, "Full Medical, Dental & Continuing Education Grant"
             ));
 
             // Part-time stylists
@@ -160,7 +160,7 @@ public class DataInitializer implements CommandLineRunner {
                     "+1 555-0303", "mateo@velvetbeauty.com", 
                     "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80", 
                     "Renowned celebrity nail artist with mastery over sculpted acrylics and chrome finishes.", 
-                    4.8, true, 32.0, 24, 0.20
+                    4.8, true, 9600.0, 24, 0.20
             ));
             stylistRepository.save(new PartTimeStylist(
                     "STY-004", "Aria Montgomery", "Bridal Glow & Skin Rejuvenation", 
@@ -168,7 +168,7 @@ public class DataInitializer implements CommandLineRunner {
                     "+1 555-0304", "aria@velvetbeauty.com", 
                     "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&q=80", 
                     "Specializes in camera-ready bridal aesthetics and delicate organic skincare treatments.", 
-                    4.9, true, 30.0, 18, 0.25
+                    4.9, true, 9000.0, 18, 0.25
             ));
         }
     }
@@ -183,8 +183,8 @@ public class DataInitializer implements CommandLineRunner {
             appointmentRepository.save(new Appointment(
                     "APT-101", "CUST-003", "victoria", "Victoria Sterling", "victoria@luxury.com", 
                     "+1 555-0203", "PREMIUM", "SRV-003", "24K Gold Cellular Glow Facial", "SKIN", 
-                    "24K Gold Luxury Radiance (+ $45.00)", "STY-002", "Camille Laurent", 
-                    yesterday, "10:30 AM", "COMPLETED", 175.0, 35.0, 140.0, 0.0, "", 
+                    "24K Gold Luxury Radiance (+ Rs. 13500.00)", "STY-002", "Camille Laurent", 
+                    yesterday, "10:30 AM", "COMPLETED", 52500.0, 10500.0, 42000.0, 0.0, "", 
                     "Customer requested extra cooling globes.", "2026-10-01 10:00"
             ));
 
@@ -192,8 +192,8 @@ public class DataInitializer implements CommandLineRunner {
             appointmentRepository.save(new Appointment(
                     "APT-102", "CUST-001", "sophia", "Sophia Miller", "sophia@example.com", 
                     "+1 555-0201", "REGULAR", "SRV-001", "Signature Balayage & Blowout", "HAIR", 
-                    "Long (+ $20.00)", "STY-001", "Elena Rostova", 
-                    yesterday, "01:30 PM", "COMPLETED", 165.0, 8.25, 156.75, 0.0, "", 
+                    "Long (+ Rs. 6000.00)", "STY-001", "Elena Rostova", 
+                    yesterday, "01:30 PM", "COMPLETED", 49500.0, 2475.0, 47025.0, 0.0, "", 
                     "Wants subtle warm honey ribbons.", "2026-10-02 12:30"
             ));
 
@@ -201,8 +201,8 @@ public class DataInitializer implements CommandLineRunner {
             appointmentRepository.save(new Appointment(
                     "APT-103", "CUST-003", "victoria", "Victoria Sterling", "victoria@luxury.com", 
                     "+1 555-0203", "PREMIUM", "SRV-005", "Velvet Luxe Gel Manicure", "NAIL", 
-                    "Long-Wear Gel Polish (+ $12.00)", "STY-03", "Mateo Silva", 
-                    tomorrow, "03:00 PM", "BOOKED", 67.0, 13.4, 53.6, 0.0, "", 
+                    "Long-Wear Gel Polish (+ Rs. 3600.00)", "STY-03", "Mateo Silva", 
+                    tomorrow, "03:00 PM", "BOOKED", 20100.0, 4020.0, 16080.0, 0.0, "", 
                     "Nude pink with pearlescent glaze.", "2026-10-05 09:15"
             ));
 
@@ -211,7 +211,7 @@ public class DataInitializer implements CommandLineRunner {
                     "APT-104", "CUST-001", "sophia", "Sophia Miller", "sophia@example.com", 
                     "+1 555-0201", "REGULAR", "SRV-004", "Deep Pore Clarifying Hydro-Peel", "SKIN", 
                     "Standard Hydrating (Included)", "STY-002", "Camille Laurent", 
-                    today, "04:30 PM", "BOOKED", 85.0, 4.25, 80.75, 0.0, "", 
+                    today, "04:30 PM", "BOOKED", 25500.0, 1275.0, 24225.0, 0.0, "", 
                     "First time hydro-peel experience.", "2026-10-06 14:00"
             ));
         }
