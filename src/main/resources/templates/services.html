@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/layout :: head('Service Menu')}"></head>
+
 <body>
 
     <header th:replace="~{fragments/layout :: header}"></header>
@@ -18,16 +20,20 @@
 
             <!-- Search & Filter Bar -->
             <div class="card" style="padding: 20px; margin-bottom: 40px;">
-                <form th:action="@{/services}" method="GET" style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+                <form th:action="@{/services}" method="GET"
+                    style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
                     <div style="flex: 2; min-width: 240px;">
-                        <input type="text" name="query" class="form-control" placeholder="Search treatments by keyword..." th:value="${searchQuery}">
+                        <input type="text" name="query" class="form-control"
+                            placeholder="Search treatments by keyword..." th:value="${searchQuery}">
                     </div>
                     <div style="flex: 1; min-width: 180px;">
                         <select name="category" class="form-select">
                             <option value="ALL" th:selected="${selectedCategory == 'ALL'}">All Categories</option>
                             <option value="HAIR" th:selected="${selectedCategory == 'HAIR'}">Hair Design</option>
-                            <option value="SKIN" th:selected="${selectedCategory == 'SKIN'}">Skin &amp; Facial Care</option>
-                            <option value="NAIL" th:selected="${selectedCategory == 'NAIL'}">Nail &amp; Spa Therapy</option>
+                            <option value="SKIN" th:selected="${selectedCategory == 'SKIN'}">Skin &amp; Facial Care
+                            </option>
+                            <option value="NAIL" th:selected="${selectedCategory == 'NAIL'}">Nail &amp; Spa Therapy
+                            </option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Filter Catalog</button>
@@ -45,7 +51,8 @@
                 <div class="card" th:each="srv : ${services}">
                     <div class="card-img-wrap">
                         <img th:src="${srv.imageUrl}" th:alt="${srv.name}">
-                        <span class="badge badge-gold" style="position: absolute; top: 14px; left: 14px;" th:text="${srv.category}">CAT</span>
+                        <span class="badge badge-gold" style="position: absolute; top: 14px; left: 14px;"
+                            th:text="${srv.category}">CAT</span>
                     </div>
 
                     <div class="card-body">
@@ -53,15 +60,19 @@
                         <p class="card-desc" th:text="${srv.description}">Description</p>
 
                         <!-- OOP Polymorphic displayDetails() demonstration -->
-                        <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); border-left: 3px solid var(--gold-primary); padding: 12px; margin-bottom: 16px; font-size: 0.83rem;">
-                            <strong style="color: var(--gold-light); display: block; margin-bottom: 2px;">Treatment Protocol:</strong>
-                            <span style="color: var(--text-secondary);" th:text="${srv.displayDetails()}">Protocol</span>
+                        <div
+                            style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); border-left: 3px solid var(--gold-primary); padding: 12px; margin-bottom: 16px; font-size: 0.83rem;">
+                            <strong style="color: var(--gold-light); display: block; margin-bottom: 2px;">Treatment
+                                Protocol:</strong>
+                            <span style="color: var(--text-secondary);"
+                                th:text="${srv.displayDetails()}">Protocol</span>
                         </div>
 
                         <!-- Available Customization Options preview -->
                         <div style="margin-bottom: 16px;">
-                            <label style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;" 
-                                   th:text="${srv.getCustomizationLabel()}">Customization</label>
+                            <label
+                                style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;"
+                                th:text="${srv.getCustomizationLabel()}">Customization</label>
                             <ul style="list-style: none; font-size: 0.82rem; color: var(--text-secondary);">
                                 <li th:each="opt : ${srv.getAvailableCustomizations()}" style="margin-bottom: 2px;">
                                     ✦ <span th:text="${opt}">Option</span>
@@ -71,10 +82,13 @@
 
                         <div class="card-meta">
                             <div>
-                                <div class="price-tag" th:text="'$' + ${#numbers.formatDecimal(srv.basePrice, 1, 2)}">$0.00</div>
-                                <small style="color: var(--text-muted);" th:text="${srv.durationMinutes} + ' mins'"></small>
+                                <div class="price-tag" th:text="'Rs. ' + ${#numbers.formatDecimal(srv.basePrice, 1, 2)}">
+                                    Rs. 0.00</div>
+                                <small style="color: var(--text-muted);"
+                                    th:text="${srv.durationMinutes} + ' mins'"></small>
                             </div>
-                            <a th:href="@{/appointments/book(serviceId=${srv.id})}" class="btn btn-primary btn-sm">Reserve This Service</a>
+                            <a th:href="@{/appointments/book(serviceId=${srv.id})}"
+                                class="btn btn-primary btn-sm">Reserve This Service</a>
                         </div>
                     </div>
                 </div>
@@ -85,4 +99,5 @@
     <footer th:replace="~{fragments/layout :: footer}"></footer>
 
 </body>
+
 </html>

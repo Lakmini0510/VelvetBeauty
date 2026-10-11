@@ -591,3 +591,22 @@ a:hover {
     .hero-stats { grid-template-columns: repeat(2, 1fr); }
     .footer-grid { grid-template-columns: 1fr; }
 }
+
+/* Form Validation Styles */
+.field-error {
+    display: none;
+    color: var(--status-danger);
+    font-size: 0.82rem;
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+.form-control.is-invalid, input.is-invalid, select.is-invalid, textarea.is-invalid {
+    border-color: var(--status-danger) !important;
+    box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.2) !important;
+}
+
+.form-control.is-valid, input.is-valid, select.is-valid, textarea.is-valid {
+    border-color: var(--status-success) !important;
+}
+

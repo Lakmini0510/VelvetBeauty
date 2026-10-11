@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/layout :: head('Home')}"></head>
+
 <body>
 
     <header th:replace="~{fragments/layout :: header}"></header>
@@ -12,12 +14,13 @@
             <span class="hero-tagline">Bespoke Aesthetics &amp; Wellness Atelier</span>
             <h1 class="hero-title">Experience the Art of <em>Timeless Elegance</em></h1>
             <p class="hero-subtitle">
-                Indulge in tailored hair architecture, clinical dermal rejuvenation, and couture nail design. 
+                Indulge in tailored hair architecture, clinical dermal rejuvenation, and couture nail design.
                 Seamless online reservations with personalized stylist matching.
             </p>
 
             <div class="hero-cta">
-                <a th:href="@{/appointments/book}" class="btn btn-primary" style="padding: 14px 32px; font-size: 1.05rem;">
+                <a th:href="@{/appointments/book}" class="btn btn-primary"
+                    style="padding: 14px 32px; font-size: 1.05rem;">
                     ✦ Book Your Reservation
                 </a>
                 <a th:href="@{/services}" class="btn btn-outline" style="padding: 14px 28px;">
@@ -40,7 +43,7 @@
                     <p>Cruelty-Free Botanicals</p>
                 </div>
                 <div class="stat-item">
-                    <h3>0$ Fee</h3>
+                    <h3>Rs. 0 Fee</h3>
                     <p>VIP Free Cancellation</p>
                 </div>
             </div>
@@ -52,7 +55,8 @@
                 <span class="badge badge-gold" style="margin-bottom: 12px;">Exclusive Privileges</span>
                 <h2>Membership Designed For You</h2>
                 <p style="color: var(--text-secondary); max-width: 550px; margin: 0 auto;">
-                    Take advantage of polymorphic discount structures and cancellation protections tailored to your tier.
+                    Take advantage of polymorphic discount structures and cancellation protections tailored to your
+                    tier.
                 </p>
             </div>
 
@@ -64,29 +68,34 @@
                     <div style="font-size: 2.2rem; font-weight: 700; color: var(--gold-light); margin-bottom: 16px;">
                         5% OFF
                     </div>
-                    <ul style="list-style: none; color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 24px; text-align: left; line-height: 2;">
+                    <ul
+                        style="list-style: none; color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 24px; text-align: left; line-height: 2;">
                         <li>✓ 5% savings on all services</li>
                         <li>✓ Direct stylist schedule reservations</li>
                         <li>✓ Free cancellation up to 24 hours</li>
-                        <li>✓ Earn 1 loyalty point per dollar</li>
+                        <li>✓ Earn 1 loyalty point per 300 Rs spent</li>
                     </ul>
-                    <a th:href="@{/register?type=REGULAR}" class="btn btn-outline" style="width: 100%;">Join Regular Tier</a>
+                    <a th:href="@{/register?type=REGULAR}" class="btn btn-outline" style="width: 100%;">Join Regular
+                        Tier</a>
                 </div>
 
                 <!-- Premium VIP Card -->
-                <div class="card" style="padding: 30px; text-align: center; border-color: rgba(223, 158, 82, 0.6); box-shadow: var(--shadow-glow);">
+                <div class="card"
+                    style="padding: 30px; text-align: center; border-color: rgba(223, 158, 82, 0.6); box-shadow: var(--shadow-glow);">
                     <span class="badge badge-vip" style="margin-bottom: 16px;">Exclusive VIP Prestige</span>
                     <h3 style="font-size: 1.6rem; margin-bottom: 12px; color: var(--gold-light);">Premium VIP</h3>
                     <div style="font-size: 2.2rem; font-weight: 700; color: var(--rose-gold); margin-bottom: 16px;">
                         20% OFF
                     </div>
-                    <ul style="list-style: none; color: var(--text-primary); font-size: 0.92rem; margin-bottom: 24px; text-align: left; line-height: 2;">
+                    <ul
+                        style="list-style: none; color: var(--text-primary); font-size: 0.92rem; margin-bottom: 24px; text-align: left; line-height: 2;">
                         <li>★ <strong>20% VIP discount</strong> on every appointment</li>
                         <li>★ <strong>100% Free Cancellation Guarantee</strong> anytime</li>
                         <li>★ Priority booking with Senior Resident stylists</li>
                         <li>★ Complimentary French champagne &amp; organic teas</li>
                     </ul>
-                    <a th:href="@{/register?type=PREMIUM}" class="btn btn-primary" style="width: 100%;">Claim VIP Diamond</a>
+                    <a th:href="@{/register?type=PREMIUM}" class="btn btn-primary" style="width: 100%;">Claim VIP
+                        Diamond</a>
                 </div>
             </div>
         </section>
@@ -105,22 +114,27 @@
                 <div class="card" th:each="service : ${featuredServices}">
                     <div class="card-img-wrap">
                         <img th:src="${service.imageUrl}" th:alt="${service.name}">
-                        <span class="badge badge-gold" style="position: absolute; top: 14px; left: 14px;" th:text="${service.category}">CATEGORY</span>
+                        <span class="badge badge-gold" style="position: absolute; top: 14px; left: 14px;"
+                            th:text="${service.category}">CATEGORY</span>
                     </div>
                     <div class="card-body">
                         <h3 class="card-title" th:text="${service.name}">Service Title</h3>
                         <p class="card-desc" th:text="${service.description}">Service description preview text...</p>
-                        
-                        <div style="background: rgba(0,0,0,0.25); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 14px; font-size: 0.84rem; color: var(--gold-light);">
+
+                        <div
+                            style="background: rgba(0,0,0,0.25); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 14px; font-size: 0.84rem; color: var(--gold-light);">
                             <span th:text="${service.displayDetails()}">Protocol details</span>
                         </div>
 
                         <div class="card-meta">
                             <div>
-                                <div class="price-tag" th:text="'$' + ${#numbers.formatDecimal(service.basePrice, 1, 2)}">$0.00</div>
-                                <small style="color: var(--text-muted);" th:text="${service.durationMinutes} + ' mins'"></small>
+                                <div class="price-tag"
+                                    th:text="'Rs. ' + ${#numbers.formatDecimal(service.basePrice, 1, 2)}">Rs. 0.00</div>
+                                <small style="color: var(--text-muted);"
+                                    th:text="${service.durationMinutes} + ' mins'"></small>
                             </div>
-                            <a th:href="@{/appointments/book(serviceId=${service.id})}" class="btn btn-primary btn-sm">Reserve</a>
+                            <a th:href="@{/appointments/book(serviceId=${service.id})}"
+                                class="btn btn-primary btn-sm">Reserve</a>
                         </div>
                     </div>
                 </div>
@@ -141,13 +155,17 @@
                 <div class="card" th:each="stylist : ${stylists}">
                     <div class="card-img-wrap" style="height: 240px;">
                         <img th:src="${stylist.imageUrl}" th:alt="${stylist.name}">
-                        <span class="badge badge-vip" style="position: absolute; bottom: 12px; left: 12px;" th:text="${stylist.employmentType}">TYPE</span>
+                        <span class="badge badge-vip" style="position: absolute; bottom: 12px; left: 12px;"
+                            th:text="${stylist.employmentType}">TYPE</span>
                     </div>
                     <div class="card-body" style="padding: 18px;">
                         <h4 style="font-size: 1.15rem; margin-bottom: 4px;" th:text="${stylist.name}">Stylist Name</h4>
-                        <p style="color: var(--gold-light); font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;" th:text="${stylist.specialty}">Specialty</p>
-                        <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 14px;" th:text="${stylist.displaySchedule()}">Schedule</p>
-                        <a th:href="@{/appointments/book(stylistId=${stylist.id})}" class="btn btn-outline btn-sm" style="width: 100%;">Book with Stylist</a>
+                        <p style="color: var(--gold-light); font-size: 0.85rem; font-weight: 500; margin-bottom: 8px;"
+                            th:text="${stylist.specialty}">Specialty</p>
+                        <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 14px;"
+                            th:text="${stylist.displaySchedule()}">Schedule</p>
+                        <a th:href="@{/appointments/book(stylistId=${stylist.id})}" class="btn btn-outline btn-sm"
+                            style="width: 100%;">Book with Stylist</a>
                     </div>
                 </div>
             </div>
@@ -162,13 +180,17 @@
 
             <div class="grid-3">
                 <div class="card" style="padding: 24px;" th:each="rev : ${reviews}">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="color: var(--gold-light); font-size: 1.1rem;" th:text="${rev.starsDisplay}">★★★★★</span>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="color: var(--gold-light); font-size: 1.1rem;"
+                            th:text="${rev.starsDisplay}">★★★★★</span>
                         <span th:if="${rev.verified}" class="badge badge-success">Verified Client ✓</span>
                         <span th:if="${!rev.verified}" class="badge badge-gold">Public Review</span>
                     </div>
-                    <p style="font-style: italic; color: var(--text-primary); font-size: 0.95rem; margin-bottom: 16px;" th:text="'&ldquo;' + ${rev.comment} + '&rdquo;'"></p>
-                    <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <p style="font-style: italic; color: var(--text-primary); font-size: 0.95rem; margin-bottom: 16px;"
+                        th:text="'&ldquo;' + ${rev.comment} + '&rdquo;'"></p>
+                    <div
+                        style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-weight: 600; font-size: 0.9rem;" th:text="${rev.customerName}"></span>
                         <small style="color: var(--text-muted);" th:text="${rev.serviceName}"></small>
                     </div>
@@ -180,4 +202,5 @@
     <footer th:replace="~{fragments/layout :: footer}"></footer>
 
 </body>
+
 </html>
