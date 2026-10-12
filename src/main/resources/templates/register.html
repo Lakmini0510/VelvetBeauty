@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/layout :: head('Register')}"></head>
+
 <body>
 
     <header th:replace="~{fragments/layout :: header}"></header>
@@ -12,34 +14,62 @@
                 <div style="text-align: center; margin-bottom: 28px;">
                     <span class="badge badge-rose" style="margin-bottom: 8px;">Client Registration</span>
                     <h2>Join the Velvet Beauty Circle</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.92rem;">Select your membership tier and create your salon account</p>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem;">Select your membership tier and create
+                        your salon account</p>
                 </div>
 
-                <form th:action="@{/register}" method="POST">
+                <form th:action="@{/register}" method="POST" id="regForm" novalidate>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                         <div class="form-group">
                             <label class="form-label" for="regUsername">Username</label>
-                            <input type="text" id="regUsername" name="username" class="form-control" placeholder="e.g. clara_rose" required>
+                            <input type="text" id="regUsername" name="username" class="form-control"
+                                placeholder="e.g. clara_rose"
+                                minlength="3" maxlength="30"
+                                pattern="[a-zA-Z0-9_]{3,30}"
+                                th:value="${enteredUsername != null ? enteredUsername : ''}"
+                                autocomplete="username" required>
+                            <small class="field-error" id="regUsernameErr">Username must be 3–30 alphanumeric chars or underscores.</small>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="regPassword">Password</label>
-                            <input type="password" id="regPassword" name="password" class="form-control" placeholder="Secure password" required>
+                            <input type="password" id="regPassword" name="password" class="form-control"
+                                placeholder="At least 6 characters"
+                                minlength="6" maxlength="64"
+                                autocomplete="new-password" required>
+                            <small class="field-error" id="regPasswordErr">Password must be at least 6 characters.</small>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="regFullName">Full Legal Name</label>
-                        <input type="text" id="regFullName" name="fullName" class="form-control" placeholder="e.g. Clara Roselyn" required>
+                        <input type="text" id="regFullName" name="fullName" class="form-control"
+                            placeholder="e.g. Clara Roselyn"
+                            minlength="2" maxlength="60"
+                            pattern="[A-Za-z\s'\-]{2,60}"
+                            th:value="${enteredFullName != null ? enteredFullName : ''}"
+                            autocomplete="name" required>
+                        <small class="field-error" id="regFullNameErr">Name must be 2–60 letters.</small>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                         <div class="form-group">
                             <label class="form-label" for="regEmail">Email Address</label>
-                            <input type="email" id="regEmail" name="email" class="form-control" placeholder="clara@example.com" required>
+                            <input type="email" id="regEmail" name="email" class="form-control"
+                                placeholder="clara@example.com"
+                                maxlength="80"
+                                th:value="${enteredEmail != null ? enteredEmail : ''}"
+                                autocomplete="email" required>
+                            <small class="field-error" id="regEmailErr">Please enter a valid email address.</small>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="regPhone">Phone Number</label>
-                            <input type="tel" id="regPhone" name="phone" class="form-control" placeholder="+1 (555) 012-3456" required>
+                            <input type="tel" id="regPhone" name="phone" class="form-control"
+                                placeholder="+1 (555) 012-3456"
+                                minlength="7" maxlength="20"
+                                pattern="[0-9\+\-\s\(\)\.]{7,20}"
+                                th:value="${enteredPhone != null ? enteredPhone : ''}"
+                                autocomplete="tel" required>
+                            <small class="field-error" id="regPhoneErr">Please enter a valid phone number (7-20 digits).</small>
                         </div>
                     </div>
 
@@ -47,31 +77,39 @@
                     <div class="form-group">
                         <label class="form-label" style="margin-bottom: 12px;">Choose Membership Tier</label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                            <label style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px; cursor: pointer; display: block; background: rgba(0,0,0,0.25);">
-                                <input type="radio" name="membershipType" value="REGULAR" checked style="margin-right: 8px;">
+                            <label
+                                style="border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px; cursor: pointer; display: block; background: rgba(0,0,0,0.25);">
+                                <input type="radio" name="membershipType" value="REGULAR"
+                                    th:checked="${enteredMembership == null or enteredMembership == 'REGULAR'}"
+                                    style="margin-right: 8px;">
                                 <strong style="color: var(--gold-light);">Regular Client</strong>
                                 <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 6px;">
-                                    5% Discount on all services. Free cancellation up to 24 hours ($15 late fee).
+                                    5% Discount on all services. Free cancellation up to 24 hours (Rs. 4500 late fee).
                                 </p>
                             </label>
 
-                            <label style="border: 1px solid rgba(223, 158, 82, 0.6); border-radius: var(--radius-md); padding: 18px; cursor: pointer; display: block; background: rgba(223, 158, 82, 0.08);">
-                                <input type="radio" name="membershipType" value="PREMIUM" style="margin-right: 8px;">
+                            <label
+                                style="border: 1px solid rgba(223, 158, 82, 0.6); border-radius: var(--radius-md); padding: 18px; cursor: pointer; display: block; background: rgba(223, 158, 82, 0.08);">
+                                <input type="radio" name="membershipType" value="PREMIUM"
+                                    th:checked="${enteredMembership == 'PREMIUM'}"
+                                    style="margin-right: 8px;">
                                 <strong style="color: var(--rose-gold);">Premium VIP</strong>
                                 <p style="color: var(--text-secondary); font-size: 0.82rem; margin-top: 6px;">
-                                    <strong>20% VIP Discount</strong>. 100% Free Cancellation Guarantee anytime. Priority matching.
+                                    <strong>20% VIP Discount</strong>. 100% Free Cancellation Guarantee anytime.
+                                    Priority matching.
                                 </p>
                             </label>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 13px; font-size: 1rem; margin-top: 10px;">
+                    <button type="submit" class="btn btn-primary" id="regSubmitBtn"
+                        style="width: 100%; padding: 13px; font-size: 1rem; margin-top: 10px;">
                         Complete Registration &amp; Enter Atelier
                     </button>
                 </form>
 
                 <div style="margin-top: 24px; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
-                    Already registered? 
+                    Already registered?
                     <a th:href="@{/login}" style="color: var(--gold-light); font-weight: 600;">Sign In Here</a>
                 </div>
             </div>
@@ -80,5 +118,61 @@
 
     <footer th:replace="~{fragments/layout :: footer}"></footer>
 
+    <script>
+    (function () {
+        const form      = document.getElementById('regForm');
+        const username  = document.getElementById('regUsername');
+        const password  = document.getElementById('regPassword');
+        const fullName  = document.getElementById('regFullName');
+        const email     = document.getElementById('regEmail');
+        const phone     = document.getElementById('regPhone');
+
+        const uErr = document.getElementById('regUsernameErr');
+        const pErr = document.getElementById('regPasswordErr');
+        const nErr = document.getElementById('regFullNameErr');
+        const eErr = document.getElementById('regEmailErr');
+        const phErr= document.getElementById('regPhoneErr');
+
+        const validate = (input, errEl, checkFn) => {
+            const valid = checkFn(input.value.trim());
+            if (!valid) {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+                errEl.style.display = 'block';
+            } else {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                errEl.style.display = 'none';
+            }
+            return valid;
+        };
+
+        const checkUsername = (v) => /^[a-zA-Z0-9_]{3,30}$/.test(v) && !v.includes(';;');
+        const checkPassword = (v) => v.length >= 6 && v.length <= 64 && !v.includes(';;');
+        const checkFullName = (v) => /^[A-Za-z\s'\-]{2,60}$/.test(v) && !v.includes(';;');
+        const checkEmail    = (v) => /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(v) && !v.includes(';;');
+        const checkPhone    = (v) => /^[0-9\+\-\s\(\)\.]{7,20}$/.test(v) && !v.includes(';;');
+
+        username.addEventListener('input', () => validate(username, uErr, checkUsername));
+        password.addEventListener('input', () => validate(password, pErr, checkPassword));
+        fullName.addEventListener('input', () => validate(fullName, nErr, checkFullName));
+        email.addEventListener('input', () => validate(email, eErr, checkEmail));
+        phone.addEventListener('input', () => validate(phone, phErr, checkPhone));
+
+        form.addEventListener('submit', (e) => {
+            const v1 = validate(username, uErr, checkUsername);
+            const v2 = validate(password, pErr, checkPassword);
+            const v3 = validate(fullName, nErr, checkFullName);
+            const v4 = validate(email, eErr, checkEmail);
+            const v5 = validate(phone, phErr, checkPhone);
+
+            if (!v1 || !v2 || !v3 || !v4 || !v5) {
+                e.preventDefault();
+            }
+        });
+    })();
+    </script>
+
 </body>
+
 </html>

@@ -119,7 +119,28 @@ public class UserService {
     }
 
     public boolean isUsernameTaken(String username) {
-        return userRepository.findByUsername(username).isPresent() 
-                || adminRepository.findByUsername(username).isPresent();
+        if (username == null) return false;
+        String trimmed = username.trim();
+        return userRepository.findByUsername(trimmed).isPresent() 
+                || adminRepository.findByUsername(trimmed).isPresent();
+    }
+
+    public boolean isEmailTaken(String email) {
+        return isEmailTaken(email, null);
+    }
+
+    public boolean isEmailTaken(String email, String excludeUserId) {
+        if (email == null) return false;
+        String trimmed = email.trim();
+        
+        boolean takenByCustomer = userRepository.findAll().stream()
+                .filter(c -> excludeUserId == null || !excludeUserId.equalsIgnoreCase(c.getId()))
+                .anyMatch(c -> trimmed.equalsIgnoreCase(c.getEmail()));
+                
+        boolean takenByAdmin = adminRepository.findAll().stream()
+                .filter(a -> excludeUserId == null || !excludeUserId.equalsIgnoreCase(a.getId()))
+                .anyMatch(a -> trimmed.equalsIgnoreCase(a.getEmail()));
+
+        return takenByCustomer || takenByAdmin;
     }
 }

@@ -43,8 +43,8 @@ public class CustomerController {
     }
 
     @PostMapping("/profile/update")
-    public String updateProfile(@RequestParam String email,
-                                @RequestParam String phone,
+    public String updateProfile(@RequestParam(required = false) String email,
+                                @RequestParam(required = false) String phone,
                                 @RequestParam(required = false) String password,
                                 @RequestParam(required = false) String membershipType,
                                 HttpSession session,
@@ -54,7 +54,42 @@ public class CustomerController {
             return "redirect:/login";
         }
 
-        boolean updated = userService.updateProfile(user.getId(), email, phone, password, membershipType);
+        String cleanEmail = email != null ? email.trim() : "";
+        String cleanPhone = phone != null ? phone.trim() : "";
+
+        // 1. Email validation
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidEmail(cleanEmail)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please provide a valid email address.");
+            return "redirect:/profile";
+        }
+        if (userService.isEmailTaken(cleanEmail, user.getId())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "The email address '" + cleanEmail + "' is already in use by another account.");
+            return "redirect:/profile";
+        }
+
+        // 2. Phone validation
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPhone(cleanPhone)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please provide a valid phone number with 9-15 digits.");
+            return "redirect:/profile";
+        }
+
+        // 3. Password validation (if provided)
+        if (password != null && !password.trim().isEmpty()) {
+            if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPassword(password)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "New password must be between 6 and 64 characters and cannot contain ';;'.");
+                return "redirect:/profile";
+            }
+        }
+
+        // 4. Membership type validation
+        if (membershipType != null && !membershipType.trim().isEmpty()) {
+            if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidMembershipType(membershipType)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Invalid membership tier selected.");
+                return "redirect:/profile";
+            }
+        }
+
+        boolean updated = userService.updateProfile(user.getId(), cleanEmail, cleanPhone, password, membershipType);
         if (updated) {
             Optional<Customer> freshOpt = userService.getCustomerById(user.getId());
             freshOpt.ifPresent(fresh -> session.setAttribute("currentUser", fresh));

@@ -42,11 +42,25 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String handleLogin(@RequestParam String username, 
-                              @RequestParam String password, 
+    public String handleLogin(@RequestParam(required = false) String username, 
+                              @RequestParam(required = false) String password, 
                               HttpSession session, 
                               RedirectAttributes redirectAttributes) {
-        Optional<User> userOpt = userService.authenticate(username, password);
+        if (username == null || username.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please enter your username.");
+            return "redirect:/login";
+        }
+        if (password == null || password.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("enteredUsername", username.trim());
+            redirectAttributes.addFlashAttribute("errorMessage", "Please enter your password.");
+            return "redirect:/login";
+        }
+        if (com.salon.VelvetBeauty.util.ValidationUtil.containsDelimiter(username, password)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid characters detected in login credentials.");
+            return "redirect:/login";
+        }
+
+        Optional<User> userOpt = userService.authenticate(username.trim(), password);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             session.setAttribute("currentUser", user);
@@ -61,6 +75,7 @@ public class AuthController {
                 return "redirect:/appointments/my";
             }
         } else {
+            redirectAttributes.addFlashAttribute("enteredUsername", username.trim());
             redirectAttributes.addFlashAttribute("errorMessage", "Invalid username or password. Please try again.");
             return "redirect:/login";
         }
@@ -75,20 +90,73 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String handleRegister(@RequestParam String username,
-                                 @RequestParam String password,
-                                 @RequestParam String fullName,
-                                 @RequestParam String email,
-                                 @RequestParam String phone,
+    public String handleRegister(@RequestParam(required = false) String username,
+                                 @RequestParam(required = false) String password,
+                                 @RequestParam(required = false) String fullName,
+                                 @RequestParam(required = false) String email,
+                                 @RequestParam(required = false) String phone,
                                  @RequestParam(defaultValue = "REGULAR") String membershipType,
                                  HttpSession session,
                                  RedirectAttributes redirectAttributes) {
-        if (userService.isUsernameTaken(username)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Username '" + username + "' is already taken.");
+        String cleanUsername = username != null ? username.trim() : "";
+        String cleanFullName = fullName != null ? fullName.trim() : "";
+        String cleanEmail = email != null ? email.trim() : "";
+        String cleanPhone = phone != null ? phone.trim() : "";
+        String cleanTier = (membershipType != null && com.salon.VelvetBeauty.util.ValidationUtil.isValidMembershipType(membershipType))
+                ? membershipType.trim().toUpperCase() : "REGULAR";
+
+        // Preserve input fields in flash attributes so client does not lose input
+        redirectAttributes.addFlashAttribute("enteredUsername", cleanUsername);
+        redirectAttributes.addFlashAttribute("enteredFullName", cleanFullName);
+        redirectAttributes.addFlashAttribute("enteredEmail", cleanEmail);
+        redirectAttributes.addFlashAttribute("enteredPhone", cleanPhone);
+        redirectAttributes.addFlashAttribute("enteredMembershipType", cleanTier);
+
+        // 1. Username validation
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidUsername(cleanUsername)) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Username must be 3-30 characters long and contain only letters, numbers, and underscores.");
+            return "redirect:/register";
+        }
+        if (userService.isUsernameTaken(cleanUsername)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Username '" + cleanUsername + "' is already taken. Please choose another.");
             return "redirect:/register";
         }
 
-        Customer customer = userService.registerCustomer(username, password, fullName, email, phone, membershipType);
+        // 2. Password validation
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPassword(password)) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Password must be between 6 and 64 characters and cannot contain reserved delimiter characters (;;).");
+            return "redirect:/register";
+        }
+
+        // 3. Full Name validation
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidName(cleanFullName)) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Please enter a valid legal name (2-60 alphabetic characters, spaces, hyphens, or apostrophes).");
+            return "redirect:/register";
+        }
+
+        // 4. Email validation
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidEmail(cleanEmail)) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Please enter a valid email address (e.g. name@example.com).");
+            return "redirect:/register";
+        }
+        if (userService.isEmailTaken(cleanEmail)) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "An account is already registered with email '" + cleanEmail + "'. Please sign in instead.");
+            return "redirect:/register";
+        }
+
+        // 5. Phone validation
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPhone(cleanPhone)) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Please provide a valid contact telephone number with 9-15 digits (e.g. +94 77 123 4567).");
+            return "redirect:/register";
+        }
+
+        Customer customer = userService.registerCustomer(cleanUsername, password, cleanFullName, cleanEmail, cleanPhone, cleanTier);
         session.setAttribute("currentUser", customer);
 
         redirectAttributes.addFlashAttribute("successMessage", 

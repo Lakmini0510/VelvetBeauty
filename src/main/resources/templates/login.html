@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/layout :: head('Sign In')}"></head>
+
 <body>
 
     <header th:replace="~{fragments/layout :: header}"></header>
@@ -12,49 +14,46 @@
                 <div style="text-align: center; margin-bottom: 28px;">
                     <span class="badge badge-gold" style="margin-bottom: 8px;">Salon Portal</span>
                     <h2>Welcome to Velvet Beauty</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.92rem;">Sign in to your client or administrative account</p>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem;">Sign in to your client or
+                        administrative account</p>
                 </div>
 
-                <form th:action="@{/login}" method="POST">
-                    <div class="form-group">
+                <form th:action="@{/login}" method="POST" id="loginForm" novalidate>
+                    <div class="form-group" id="loginUsernameGroup">
                         <label class="form-label" for="loginUsername">Username</label>
-                        <input type="text" id="loginUsername" name="username" class="form-control" placeholder="Enter your username" required autofocus>
+                        <input type="text" id="loginUsername" name="username" class="form-control"
+                            placeholder="Enter your username"
+                            minlength="3" maxlength="30"
+                            pattern="[a-zA-Z0-9_]{3,30}"
+                            th:value="${enteredUsername != null ? enteredUsername : ''}"
+                            autocomplete="username" autofocus>
+                        <small class="field-error" id="usernameError">Username must be 3–30 alphanumeric characters or underscores.</small>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="loginPasswordGroup">
                         <label class="form-label" for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" name="password" class="form-control" placeholder="Enter your password" required>
+                        <div style="position: relative;">
+                            <input type="password" id="loginPassword" name="password" class="form-control"
+                                placeholder="Enter your password"
+                                minlength="6" maxlength="64"
+                                autocomplete="current-password">
+                            <button type="button" id="toggleLoginPass"
+                                style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;"
+                                aria-label="Show/hide password">👁</button>
+                        </div>
+                        <small class="field-error" id="passwordError">Password must be at least 6 characters.</small>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 13px; font-size: 1rem; margin-top: 10px;">
+                    <button type="submit" class="btn btn-primary" id="loginSubmitBtn"
+                        style="width: 100%; padding: 13px; font-size: 1rem; margin-top: 10px;">
                         Sign In to Account
                     </button>
                 </form>
 
                 <div style="margin-top: 24px; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
-                    Don't have an account yet? 
-                    <a th:href="@{/register}" style="color: var(--gold-light); font-weight: 600;">Register as a Client</a>
-                </div>
-
-                <!-- Fast Testing Presets Box -->
-                <div style="margin-top: 36px; padding: 20px; border-radius: var(--radius-md); background: rgba(0,0,0,0.3); border: 1px dashed var(--border-subtle);">
-                    <div style="font-size: 0.82rem; font-weight: 700; color: var(--gold-light); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.05em;">
-                        ⚡ Quick Demo / Evaluation Profiles:
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <button type="button" class="btn btn-outline btn-sm quick-login-btn" data-user="sophia" data-pass="sophia123">
-                            Regular: sophia
-                        </button>
-                        <button type="button" class="btn btn-outline btn-sm quick-login-btn" data-user="victoria" data-pass="vip123">
-                            VIP: victoria
-                        </button>
-                        <button type="button" class="btn btn-outline btn-sm quick-login-btn" data-user="admin" data-pass="admin123">
-                            Owner: admin
-                        </button>
-                        <button type="button" class="btn btn-outline btn-sm quick-login-btn" data-user="reception" data-pass="recep123">
-                            Recep: reception
-                        </button>
-                    </div>
+                    Don't have an account yet?
+                    <a th:href="@{/register}" style="color: var(--gold-light); font-weight: 600;">Register as a
+                        Client</a>
                 </div>
             </div>
         </div>
@@ -62,5 +61,55 @@
 
     <footer th:replace="~{fragments/layout :: footer}"></footer>
 
+    <script>
+    (function () {
+        const form        = document.getElementById('loginForm');
+        const unameInput  = document.getElementById('loginUsername');
+        const passInput   = document.getElementById('loginPassword');
+        const unameErr    = document.getElementById('usernameError');
+        const passErr     = document.getElementById('passwordError');
+        const toggleBtn   = document.getElementById('toggleLoginPass');
+
+        const showError = (input, errorEl, groupId) => {
+            input.style.borderColor = '#e74c3c';
+            errorEl.style.display = 'block';
+        };
+        const clearError = (input, errorEl) => {
+            input.style.borderColor = '';
+            errorEl.style.display = 'none';
+        };
+
+        unameInput.addEventListener('input', () => {
+            const v = unameInput.value.trim();
+            if (!v || !/^[a-zA-Z0-9_]{3,30}$/.test(v)) showError(unameInput, unameErr);
+            else clearError(unameInput, unameErr);
+        });
+
+        passInput.addEventListener('input', () => {
+            if (passInput.value.length < 6) showError(passInput, passErr);
+            else clearError(passInput, passErr);
+        });
+
+        toggleBtn.addEventListener('click', () => {
+            passInput.type = passInput.type === 'password' ? 'text' : 'password';
+        });
+
+        form.addEventListener('submit', (e) => {
+            let valid = true;
+            const u = unameInput.value.trim();
+            if (!u || !/^[a-zA-Z0-9_]{3,30}$/.test(u)) {
+                showError(unameInput, unameErr);
+                valid = false;
+            }
+            if (passInput.value.length < 6) {
+                showError(passInput, passErr);
+                valid = false;
+            }
+            if (!valid) e.preventDefault();
+        });
+    })();
+    </script>
+
 </body>
+
 </html>

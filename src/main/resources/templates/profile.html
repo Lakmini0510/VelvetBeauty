@@ -55,7 +55,7 @@
                     <div class="card" style="padding: 32px;">
                         <h3 style="margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">Edit Profile &amp; Preferences</h3>
 
-                        <form th:action="@{/profile/update}" method="POST">
+                        <form th:action="@{/profile/update}" method="POST" id="profileForm" novalidate>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                                 <div class="form-group">
                                     <label class="form-label">Username (Immutable)</label>
@@ -69,17 +69,26 @@
 
                             <div class="form-group">
                                 <label class="form-label" for="profEmail">Email Address</label>
-                                <input type="email" id="profEmail" name="email" class="form-control" th:value="${customer.email}" required>
+                                <input type="email" id="profEmail" name="email" class="form-control" 
+                                       th:value="${customer.email}" maxlength="80" required>
+                                <small class="field-error" id="profEmailErr">Please enter a valid email address.</small>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="profPhone">Phone Number</label>
-                                <input type="tel" id="profPhone" name="phone" class="form-control" th:value="${customer.phone}" required>
+                                <input type="tel" id="profPhone" name="phone" class="form-control" 
+                                       th:value="${customer.phone}" 
+                                       minlength="7" maxlength="20"
+                                       pattern="[0-9\+\-\s\(\)\.]{7,20}" required>
+                                <small class="field-error" id="profPhoneErr">Please enter a valid phone number (7-20 digits).</small>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="profPassword">New Password (leave empty to keep current)</label>
-                                <input type="password" id="profPassword" name="password" class="form-control" placeholder="••••••••">
+                                <input type="password" id="profPassword" name="password" class="form-control" 
+                                       minlength="6" maxlength="64"
+                                       placeholder="Leave blank to preserve current password">
+                                <small class="field-error" id="profPassErr">New password must be at least 6 characters and cannot contain ';;'.</small>
                             </div>
 
                             <div class="form-group">
@@ -92,7 +101,7 @@
 
                             <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
                                 <a th:href="@{/appointments/my}" class="btn btn-outline">View My Appointments</a>
-                                <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+                                <button type="submit" class="btn btn-primary" id="profileSubmitBtn">Save Profile Changes</button>
                             </div>
                         </form>
                     </div>
@@ -103,6 +112,48 @@
     </main>
 
     <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <script>
+    (function () {
+        const form  = document.getElementById('profileForm');
+        const email = document.getElementById('profEmail');
+        const phone = document.getElementById('profPhone');
+        const pass  = document.getElementById('profPassword');
+
+        const eErr = document.getElementById('profEmailErr');
+        const phErr= document.getElementById('profPhoneErr');
+        const pErr = document.getElementById('profPassErr');
+
+        const checkEmail = (v) => /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(v) && !v.includes(';;');
+        const checkPhone = (v) => /^[0-9\+\-\s\(\)\.]{7,20}$/.test(v) && !v.includes(';;');
+        const checkPass  = (v) => v === '' || (v.length >= 6 && v.length <= 64 && !v.includes(';;'));
+
+        const validate = (input, errEl, checkFn) => {
+            const valid = checkFn(input.value.trim());
+            if (!valid) {
+                input.classList.add('is-invalid');
+                errEl.style.display = 'block';
+            } else {
+                input.classList.remove('is-invalid');
+                errEl.style.display = 'none';
+            }
+            return valid;
+        };
+
+        email.addEventListener('input', () => validate(email, eErr, checkEmail));
+        phone.addEventListener('input', () => validate(phone, phErr, checkPhone));
+        pass.addEventListener('input', () => validate(pass, pErr, checkPass));
+
+        form.addEventListener('submit', (e) => {
+            const v1 = validate(email, eErr, checkEmail);
+            const v2 = validate(phone, phErr, checkPhone);
+            const v3 = validate(pass, pErr, checkPass);
+            if (!v1 || !v2 || !v3) {
+                e.preventDefault();
+            }
+        });
+    })();
+    </script>
 
 </body>
 </html>
