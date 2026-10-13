@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/layout :: head('Book Appointment')}"></head>
+
 <body>
 
     <header th:replace="~{fragments/layout :: header}"></header>
@@ -12,7 +14,8 @@
 
                 <!-- Booking Form Panel -->
                 <div class="card" style="padding: 36px;">
-                    <div style="margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">
+                    <div
+                        style="margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">
                         <span class="badge badge-gold" style="margin-bottom: 8px;">Online Reservation</span>
                         <h2>Book Your Salon Appointment</h2>
                         <p style="color: var(--text-secondary); font-size: 0.9rem;">
@@ -20,24 +23,24 @@
                         </p>
                     </div>
 
-                    <form th:action="@{/appointments/book}" method="POST" id="bookingForm">
-                        
+                    <form th:action="@{/appointments/book}" method="POST" id="bookingForm" novalidate>
+
                         <!-- Hidden customer discount rate for JS live calculator -->
-                        <input type="hidden" id="userDiscountRate" 
-                               th:value="${currentUser instanceof T(com.salon.VelvetBeauty.model.Customer) ? currentUser.getDiscountRate() : 0.0}">
+                        <input type="hidden" id="userDiscountRate"
+                            th:value="${currentUser instanceof T(com.salon.VelvetBeauty.model.Customer) ? currentUser.getDiscountRate() : 0.0}">
 
                         <!-- 1. Service Selection -->
                         <div class="form-group">
                             <label class="form-label" for="bookingServiceSelect">1. Choose Service</label>
                             <select id="bookingServiceSelect" name="serviceId" class="form-select" required>
-                                <option value="" disabled selected>-- Select a treatment --</option>
-                                <option th:each="srv : ${services}" 
-                                        th:value="${srv.id}" 
-                                        th:text="${srv.name} + ' (' + ${srv.category} + ' - $' + ${#numbers.formatDecimal(srv.basePrice, 1, 2)} + ')'"
-                                        th:attr="data-base-price=${srv.basePrice},data-category=${srv.category}"
-                                        th:selected="${preselectedServiceId != null and preselectedServiceId == srv.id}">
+                                <option value="" disabled th:selected="${preselectedServiceId == null}">-- Select a treatment --</option>
+                                <option th:each="srv : ${services}" th:value="${srv.id}"
+                                    th:text="${srv.name} + ' (' + ${srv.category} + ' - Rs. ' + ${#numbers.formatDecimal(srv.basePrice, 1, 2)} + ')'"
+                                    th:attr="data-base-price=${srv.basePrice},data-category=${srv.category}"
+                                    th:selected="${preselectedServiceId != null and preselectedServiceId == srv.id}">
                                 </option>
                             </select>
+                            <small class="field-error" id="serviceErr">Please select a salon service.</small>
                         </div>
 
                         <!-- 2. Dynamic Customization Option (OOP Polymorphism) -->
@@ -49,7 +52,8 @@
                                 <option value="Standard (Included)">Standard (Included)</option>
                             </select>
                             <small style="color: var(--text-muted); display: block; margin-top: 4px;">
-                                Customizations vary polymorphically by category (Hair Length, Skin Serum Grade, Nail Finish).
+                                Customizations vary polymorphically by category (Hair Length, Skin Serum Grade, Nail
+                                Finish).
                             </small>
                         </div>
 
@@ -57,38 +61,45 @@
                         <div class="form-group">
                             <label class="form-label" for="bookingStylistSelect">3. Select Stylist / Specialist</label>
                             <select id="bookingStylistSelect" name="stylistId" class="form-select" required>
-                                <option value="" disabled selected>-- Choose your stylist --</option>
-                                <option th:each="st : ${stylists}" 
-                                        th:value="${st.id}" 
-                                        th:text="${st.name} + ' — ' + ${st.specialty} + ' (' + ${st.getEmploymentType()} + ')'"
-                                        th:selected="${preselectedStylistId != null and preselectedStylistId == st.id}">
+                                <option value="" disabled th:selected="${preselectedStylistId == null}">-- Choose your stylist --</option>
+                                <option th:each="st : ${stylists}" th:value="${st.id}"
+                                    th:text="${st.name} + ' — ' + ${st.specialty} + ' (' + ${st.getEmploymentType()} + ')'"
+                                    th:selected="${preselectedStylistId != null and preselectedStylistId == st.id}">
                                 </option>
                             </select>
+                            <small class="field-error" id="stylistErr">Please select an available stylist.</small>
                         </div>
 
                         <!-- 4. Date & Time Slot (Abstraction: Availability Verification) -->
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div class="form-group">
                                 <label class="form-label" for="bookingDateInput">4. Appointment Date</label>
-                                <input type="date" id="bookingDateInput" name="appointmentDate" class="form-control" 
-                                       th:value="${defaultDate}" required>
+                                <input type="date" id="bookingDateInput" name="appointmentDate" class="form-control"
+                                    th:value="${defaultDate}"
+                                    th:attr="min=${minDate != null ? minDate : defaultDate}" required>
+                                <small class="field-error" id="dateErr">Please choose today or a future date.</small>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="bookingTimeSlotSelect">5. Time Slot</label>
                                 <select id="bookingTimeSlotSelect" name="timeSlot" class="form-select" required>
                                     <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot}"></option>
                                 </select>
+                                <small class="field-error" id="slotErr">Please choose a valid time slot.</small>
                             </div>
                         </div>
 
                         <!-- 5. Client Notes -->
                         <div class="form-group">
-                            <label class="form-label" for="bookingNotes">Special Requests or Allergies (Optional)</label>
-                            <textarea id="bookingNotes" name="notes" class="form-control" rows="3" 
-                                      placeholder="e.g. Sensitive skin, prefer quiet session, specific tone reference..."></textarea>
+                            <label class="form-label" for="bookingNotes">Special Requests or Allergies
+                                (Optional)</label>
+                            <textarea id="bookingNotes" name="notes" class="form-control" rows="3"
+                                maxlength="500"
+                                placeholder="e.g. Sensitive skin, prefer quiet session, specific tone reference..."></textarea>
+                            <small class="field-error" id="notesErr">Special requests cannot exceed 500 characters or contain ';;'.</small>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+                        <button type="submit" class="btn btn-primary" id="bookSubmitBtn"
+                            style="width: 100%; padding: 14px; font-size: 1.05rem;">
                             ✦ Confirm Reservation
                         </button>
                     </form>
@@ -97,39 +108,49 @@
                 <!-- Right: Live Pricing Breakdown & Cancellation Policy -->
                 <div>
                     <div class="card" style="padding: 26px; position: sticky; top: 100px;">
-                        <h3 style="font-size: 1.2rem; margin-bottom: 18px; color: var(--gold-light);">Reservation Summary</h3>
+                        <h3 style="font-size: 1.2rem; margin-bottom: 18px; color: var(--gold-light);">Reservation
+                            Summary</h3>
 
-                        <div style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 14px; margin-bottom: 14px;">
+                        <div
+                            style="border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 14px; margin-bottom: 14px;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="color: var(--text-secondary); font-size: 0.9rem;">Service Base + Custom:</span>
-                                <strong id="summaryBasePrice" style="color: var(--text-primary);">$0.00</strong>
+                                <span style="color: var(--text-secondary); font-size: 0.9rem;">Service Base +
+                                    Custom:</span>
+                                <strong id="summaryBasePrice" style="color: var(--text-primary);">Rs. 0.00</strong>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                                 <span style="color: var(--rose-gold); font-size: 0.9rem;">
-                                    Member Discount (<span th:text="${currentUser instanceof T(com.salon.VelvetBeauty.model.Customer) ? #numbers.formatDecimal(currentUser.getDiscountRate() * 100, 1, 0) : 0}">0</span>%):
+                                    Member Discount (<span
+                                        th:text="${currentUser instanceof T(com.salon.VelvetBeauty.model.Customer) ? #numbers.formatDecimal(currentUser.getDiscountRate() * 100, 1, 0) : 0}">0</span>%):
                                 </span>
-                                <strong id="summaryDiscount" style="color: var(--rose-gold);">-$0.00</strong>
+                                <strong id="summaryDiscount" style="color: var(--rose-gold);">-Rs. 0.00</strong>
                             </div>
                         </div>
 
-                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 22px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 22px;">
                             <span style="font-size: 1.05rem; font-weight: 600;">Estimated Total:</span>
-                            <span id="summaryFinalPrice" style="font-size: 1.8rem; font-weight: 700; color: var(--gold-light);">$0.00</span>
+                            <span id="summaryFinalPrice"
+                                style="font-size: 1.8rem; font-weight: 700; color: var(--gold-light);">Rs. 0.00</span>
                         </div>
 
                         <!-- Cancellation Policy Alert Box (Component 03 OOP Polymorphism) -->
-                        <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 14px; font-size: 0.82rem; border-left: 3px solid var(--gold-primary);">
-                            <strong style="color: var(--gold-light); display: block; margin-bottom: 4px;">Cancellation Policy Protection:</strong>
+                        <div
+                            style="background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); padding: 14px; font-size: 0.82rem; border-left: 3px solid var(--gold-primary);">
+                            <strong style="color: var(--gold-light); display: block; margin-bottom: 4px;">Cancellation
+                                Policy Protection:</strong>
                             <div th:if="${isPremium}">
                                 <span class="badge badge-vip" style="margin-bottom: 6px;">VIP Free Cancellation</span>
                                 <p style="color: var(--text-secondary);">
-                                    As a Premium VIP Diamond client, you enjoy <strong>$0 cancellation fees</strong> guaranteed at any time.
+                                    As a Premium VIP Diamond client, you enjoy <strong>Rs. 0 cancellation fees</strong>
+                                    guaranteed at any time.
                                 </p>
                             </div>
                             <div th:if="${!isPremium}">
                                 <span class="badge badge-gold" style="margin-bottom: 6px;">Standard Policy</span>
                                 <p style="color: var(--text-secondary);">
-                                    Free cancellation up to 24 hours prior. Cancellations within 24 hours incur a standard $15.00 late fee.
+                                    Free cancellation up to 24 hours prior. Cancellations within 24 hours incur a
+                                    standard Rs. 4500.00 late fee.
                                 </p>
                             </div>
                         </div>
@@ -143,4 +164,5 @@
     <footer th:replace="~{fragments/layout :: footer}"></footer>
 
 </body>
+
 </html>

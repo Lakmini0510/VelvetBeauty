@@ -53,6 +53,7 @@ public class AppointmentController {
         model.addAttribute("services", services);
         model.addAttribute("stylists", stylists);
         model.addAttribute("timeSlots", AppointmentService.STANDARD_TIME_SLOTS);
+        model.addAttribute("minDate", LocalDate.now().toString());
         model.addAttribute("defaultDate", LocalDate.now().plusDays(1).toString());
         model.addAttribute("preselectedServiceId", serviceId);
         model.addAttribute("preselectedStylistId", stylistId);
@@ -61,11 +62,11 @@ public class AppointmentController {
     }
 
     @PostMapping("/book")
-    public String handleBooking(@RequestParam String serviceId,
+    public String handleBooking(@RequestParam(required = false) String serviceId,
                                 @RequestParam(required = false) String customizationOption,
-                                @RequestParam String stylistId,
-                                @RequestParam String appointmentDate,
-                                @RequestParam String timeSlot,
+                                @RequestParam(required = false) String stylistId,
+                                @RequestParam(required = false) String appointmentDate,
+                                @RequestParam(required = false) String timeSlot,
                                 @RequestParam(required = false) String notes,
                                 HttpSession session,
                                 RedirectAttributes redirectAttributes) {
@@ -75,7 +76,32 @@ public class AppointmentController {
         }
 
         if (!(user instanceof Customer customer)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Only customers can book appointments.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Only clients can reserve salon appointments.");
+            return "redirect:/appointments/book";
+        }
+
+        if (serviceId == null || serviceId.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please select a salon service.");
+            return "redirect:/appointments/book";
+        }
+
+        if (stylistId == null || stylistId.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please select a stylist specialist.");
+            return "redirect:/appointments/book";
+        }
+
+        if (appointmentDate == null || appointmentDate.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please select an appointment date.");
+            return "redirect:/appointments/book";
+        }
+
+        if (timeSlot == null || timeSlot.trim().isEmpty() || !AppointmentService.STANDARD_TIME_SLOTS.contains(timeSlot)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please choose a valid salon time slot.");
+            return "redirect:/appointments/book";
+        }
+
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidNotes(notes)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Appointment notes must not exceed 500 characters and cannot contain ';;'.");
             return "redirect:/appointments/book";
         }
 
@@ -83,13 +109,18 @@ public class AppointmentController {
         customer = userService.getCustomerById(customer.getId()).orElse(customer);
 
         try {
-            LocalDate date = LocalDate.parse(appointmentDate);
+            LocalDate date = LocalDate.parse(appointmentDate.trim());
+            if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidFutureOrTodayDate(date)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Appointment date cannot be in the past.");
+                return "redirect:/appointments/book";
+            }
+
             Appointment appt = appointmentService.bookAppointment(
-                    customer, serviceId, customizationOption, stylistId, date, timeSlot, notes
+                    customer, serviceId.trim(), customizationOption, stylistId.trim(), date, timeSlot.trim(), notes
             );
 
             redirectAttributes.addFlashAttribute("successMessage", 
-                    "Appointment booked successfully! Ref: " + appt.getId() + ". Discount applied: $" + appt.getDiscountAmount());
+                    "Appointment booked successfully! Ref: " + appt.getId() + ". Discount applied: Rs. " + appt.getDiscountAmount());
             return "redirect:/appointments/my";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -123,10 +154,10 @@ public class AppointmentController {
             Appointment appt = appointmentService.cancelAppointment(id, reason);
             if (appt.getCancellationFee() > 0) {
                 redirectAttributes.addFlashAttribute("infoMessage", 
-                        "Appointment " + id + " has been cancelled. Late cancellation fee applied: $" + appt.getCancellationFee());
+                        "Appointment " + id + " has been cancelled. Late cancellation fee applied: Rs. " + appt.getCancellationFee());
             } else {
                 redirectAttributes.addFlashAttribute("successMessage", 
-                        "Appointment " + id + " was cancelled with $0.00 fee according to your membership guarantee.");
+                        "Appointment " + id + " was cancelled with Rs. 0.00 fee according to your membership guarantee.");
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());

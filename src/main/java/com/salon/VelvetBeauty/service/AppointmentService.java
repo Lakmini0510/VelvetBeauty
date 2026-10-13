@@ -94,6 +94,18 @@ public class AppointmentService implements AvailabilityChecker {
      */
     public Appointment bookAppointment(Customer customer, String serviceId, String customizationOption, 
                                        String stylistId, LocalDate date, String timeSlot, String notes) {
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidFutureOrTodayDate(date)) {
+            throw new IllegalArgumentException("Appointment date cannot be in the past.");
+        }
+
+        if (!STANDARD_TIME_SLOTS.contains(timeSlot)) {
+            throw new IllegalArgumentException("Invalid time slot selected: " + timeSlot);
+        }
+
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidNotes(notes)) {
+            throw new IllegalArgumentException("Special requests notes must be under 500 characters and cannot contain ';;'.");
+        }
+
         // Validate availability abstraction
         if (!isSlotAvailable(stylistId, date, timeSlot, null)) {
             throw new IllegalStateException("Stylist is unavailable at selected time slot " + timeSlot + " on " + date);
@@ -155,6 +167,14 @@ public class AppointmentService implements AvailabilityChecker {
      * Reschedules an existing appointment to a new date and time.
      */
     public boolean rescheduleAppointment(String appointmentId, LocalDate newDate, String newTimeSlot) {
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidFutureOrTodayDate(newDate)) {
+            throw new IllegalArgumentException("Rescheduled appointment date cannot be in the past.");
+        }
+
+        if (!STANDARD_TIME_SLOTS.contains(newTimeSlot)) {
+            throw new IllegalArgumentException("Invalid time slot: " + newTimeSlot);
+        }
+
         Optional<Appointment> apptOpt = appointmentRepository.findById(appointmentId);
         if (apptOpt.isEmpty()) return false;
 

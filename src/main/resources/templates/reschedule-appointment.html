@@ -28,13 +28,15 @@
                     </div>
                 </div>
 
-                <form th:action="@{/appointments/reschedule/{id}(id=${appointment.id})}" method="POST">
+                <form th:action="@{/appointments/reschedule/{id}(id=${appointment.id})}" method="POST" id="rescheduleForm" novalidate>
                     <input type="hidden" id="bookingStylistSelect" th:value="${appointment.stylistId}">
 
                     <div class="form-group">
                         <label class="form-label" for="bookingDateInput">Select New Date</label>
                         <input type="date" id="bookingDateInput" name="newDate" class="form-control" 
-                               th:value="${appointment.appointmentDate}" required>
+                               th:value="${appointment.appointmentDate}"
+                               th:attr="min=${minDate != null ? minDate : appointment.appointmentDate}" required>
+                        <small class="field-error" id="reschedDateErr">Please choose today or a future date.</small>
                     </div>
 
                     <div class="form-group">
@@ -43,11 +45,12 @@
                             <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot}"
                                     th:selected="${slot == appointment.timeSlot}"></option>
                         </select>
+                        <small class="field-error" id="reschedSlotErr">Please select a time slot.</small>
                     </div>
 
                     <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
                         <a th:href="@{/appointments/my}" class="btn btn-outline">Keep Original Time</a>
-                        <button type="submit" class="btn btn-primary">Confirm Reschedule</button>
+                        <button type="submit" class="btn btn-primary" id="rescheduleSubmitBtn">Confirm Reschedule</button>
                     </div>
                 </form>
             </div>
