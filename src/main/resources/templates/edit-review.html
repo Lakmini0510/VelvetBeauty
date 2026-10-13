@@ -17,7 +17,7 @@
                     </p>
                 </div>
 
-                <form th:action="@{/reviews/edit/{id}(id=${review.id})}" method="POST">
+                <form th:action="@{/reviews/edit/{id}(id=${review.id})}" method="POST" id="editReviewForm" novalidate>
                     <div class="form-group">
                         <label class="form-label" for="editRating">Rating</label>
                         <select id="editRating" name="rating" class="form-select" required>
@@ -31,13 +31,15 @@
 
                     <div class="form-group">
                         <label class="form-label" for="editComment">Comment</label>
-                        <textarea id="editComment" name="comment" class="form-control" rows="4" required 
+                        <textarea id="editComment" name="comment" class="form-control" rows="4" 
+                                  minlength="10" maxlength="1000" required 
                                   th:text="${review.comment}"></textarea>
+                        <small class="field-error" id="editCommentErr">Comment must be 10–1000 characters and cannot contain ';;'.</small>
                     </div>
 
                     <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
                         <a th:href="@{/reviews}" class="btn btn-outline">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-primary" id="editSubmitBtn">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -45,6 +47,34 @@
     </main>
 
     <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <script>
+    (function () {
+        const form = document.getElementById('editReviewForm');
+        const cmt = document.getElementById('editComment');
+        const cmtErr = document.getElementById('editCommentErr');
+
+        cmt.addEventListener('input', () => {
+            const v = cmt.value.trim();
+            if (v.length < 10 || v.includes(';;')) {
+                cmt.classList.add('is-invalid');
+                cmtErr.style.display = 'block';
+            } else {
+                cmt.classList.remove('is-invalid');
+                cmtErr.style.display = 'none';
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            const v = cmt.value.trim();
+            if (v.length < 10 || v.includes(';;')) {
+                cmt.classList.add('is-invalid');
+                cmtErr.style.display = 'block';
+                e.preventDefault();
+            }
+        });
+    })();
+    </script>
 
 </body>
 </html>

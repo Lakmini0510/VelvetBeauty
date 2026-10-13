@@ -82,10 +82,10 @@ public class ReviewCatalogController {
     }
 
     @PostMapping("/new")
-    public String handleSubmitReview(@RequestParam String serviceId,
-                                     @RequestParam String stylistId,
-                                     @RequestParam int rating,
-                                     @RequestParam String comment,
+    public String handleSubmitReview(@RequestParam(required = false) String serviceId,
+                                     @RequestParam(required = false) String stylistId,
+                                     @RequestParam(required = false) Integer rating,
+                                     @RequestParam(required = false) String comment,
                                      @RequestParam(required = false) String appointmentId,
                                      HttpSession session,
                                      RedirectAttributes redirectAttributes) {
@@ -94,8 +94,41 @@ public class ReviewCatalogController {
             return "redirect:/login";
         }
 
-        Optional<SalonService> srvOpt = catalogService.getServiceById(serviceId);
-        Optional<Stylist> styOpt = stylistService.getStylistById(stylistId);
+        // 1. Service must be selected
+        if (serviceId == null || serviceId.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please select the service you experienced.");
+            return "redirect:/reviews/new";
+        }
+        if (catalogService.getServiceById(serviceId.trim()).isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "The selected service was not found.");
+            return "redirect:/reviews/new";
+        }
+
+        // 2. Stylist must be selected
+        if (stylistId == null || stylistId.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please select the stylist you reviewed.");
+            return "redirect:/reviews/new";
+        }
+        if (stylistService.getStylistById(stylistId.trim()).isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "The selected stylist was not found.");
+            return "redirect:/reviews/new";
+        }
+
+        // 3. Rating validation (1-5)
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidRating(rating)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please provide a star rating between 1 and 5.");
+            return "redirect:/reviews/new";
+        }
+
+        // 4. Comment validation
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidComment(comment)) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Your feedback must be between 10 and 1000 characters and cannot contain ';;'.");
+            return "redirect:/reviews/new";
+        }
+
+        Optional<SalonService> srvOpt = catalogService.getServiceById(serviceId.trim());
+        Optional<Stylist> styOpt = stylistService.getStylistById(stylistId.trim());
 
         String serviceName = srvOpt.map(SalonService::getName).orElse("Salon Service");
         String stylistName = styOpt.map(Stylist::getName).orElse("Salon Stylist");
@@ -103,12 +136,12 @@ public class ReviewCatalogController {
         Review review = reviewService.submitReview(
                 user.getId(),
                 user.getFullName(),
-                serviceId,
+                serviceId.trim(),
                 serviceName,
-                stylistId,
+                stylistId.trim(),
                 stylistName,
                 rating,
-                comment,
+                comment.trim(),
                 appointmentId
         );
 
@@ -147,8 +180,8 @@ public class ReviewCatalogController {
 
     @PostMapping("/edit/{id}")
     public String handleEdit(@PathVariable String id,
-                             @RequestParam int rating,
-                             @RequestParam String comment,
+                             @RequestParam(required = false) Integer rating,
+                             @RequestParam(required = false) String comment,
                              HttpSession session,
                              RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("currentUser");
@@ -156,7 +189,18 @@ public class ReviewCatalogController {
             return "redirect:/login";
         }
 
-        boolean updated = reviewService.updateReview(id, rating, comment);
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidRating(rating)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please provide a valid star rating between 1 and 5.");
+            return "redirect:/reviews/edit/" + id;
+        }
+
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidComment(comment)) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Feedback must be between 10 and 1000 characters and cannot contain ';;'.");
+            return "redirect:/reviews/edit/" + id;
+        }
+
+        boolean updated = reviewService.updateReview(id, rating, comment.trim());
         if (updated) {
             redirectAttributes.addFlashAttribute("successMessage", "Review updated successfully!");
         } else {

@@ -17,7 +17,7 @@
                     </p>
                 </div>
 
-                <form th:action="@{/reviews/new}" method="POST">
+                <form th:action="@{/reviews/new}" method="POST" id="reviewForm" novalidate>
                     
                     <!-- Link to Completed Appointment if available -->
                     <div class="form-group" th:if="${!#lists.isEmpty(completedAppointments)}">
@@ -40,6 +40,7 @@
                             <option value="" disabled selected>-- Choose Service --</option>
                             <option th:each="s : ${services}" th:value="${s.id}" th:text="${s.name}"></option>
                         </select>
+                        <small class="field-error" id="revServiceErr">Please select a service.</small>
                     </div>
 
                     <!-- Stylist Selection -->
@@ -49,6 +50,7 @@
                             <option value="" disabled selected>-- Choose Stylist --</option>
                             <option th:each="st : ${stylists}" th:value="${st.id}" th:text="${st.name} + ' (' + ${st.specialty} + ')'"></option>
                         </select>
+                        <small class="field-error" id="revStylistErr">Please select a stylist.</small>
                     </div>
 
                     <!-- Star Rating (1-5) -->
@@ -67,12 +69,14 @@
                     <div class="form-group">
                         <label class="form-label" for="reviewComment">Your Feedback &amp; Impressions</label>
                         <textarea id="reviewComment" name="comment" class="form-control" rows="4" 
-                                  placeholder="Describe the treatment, stylist attentiveness, results, and salon ambiance..." required></textarea>
+                                  minlength="10" maxlength="1000"
+                                  placeholder="Describe the treatment, stylist attentiveness, results, and salon ambiance (min 10 characters)..." required></textarea>
+                        <small class="field-error" id="revCommentErr">Your feedback must be at least 10 characters and cannot contain ';;'.</small>
                     </div>
 
                     <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
                         <a th:href="@{/reviews}" class="btn btn-outline">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Publish Review</button>
+                        <button type="submit" class="btn btn-primary" id="reviewSubmitBtn">Publish Review</button>
                     </div>
                 </form>
             </div>
@@ -80,6 +84,56 @@
     </main>
 
     <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <script>
+    (function () {
+        const form = document.getElementById('reviewForm');
+        const srv = document.getElementById('reviewServiceSelect');
+        const sty = document.getElementById('reviewStylistSelect');
+        const cmt = document.getElementById('reviewComment');
+        const srvErr = document.getElementById('revServiceErr');
+        const styErr = document.getElementById('revStylistErr');
+        const cmtErr = document.getElementById('revCommentErr');
+
+        cmt.addEventListener('input', () => {
+            const v = cmt.value.trim();
+            if (v.length < 10 || v.includes(';;')) {
+                cmt.classList.add('is-invalid');
+                cmtErr.style.display = 'block';
+            } else {
+                cmt.classList.remove('is-invalid');
+                cmtErr.style.display = 'none';
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            let valid = true;
+            if (!srv.value) {
+                srv.classList.add('is-invalid');
+                srvErr.style.display = 'block';
+                valid = false;
+            } else {
+                srv.classList.remove('is-invalid');
+                srvErr.style.display = 'none';
+            }
+            if (!sty.value) {
+                sty.classList.add('is-invalid');
+                styErr.style.display = 'block';
+                valid = false;
+            } else {
+                sty.classList.remove('is-invalid');
+                styErr.style.display = 'none';
+            }
+            const v = cmt.value.trim();
+            if (v.length < 10 || v.includes(';;')) {
+                cmt.classList.add('is-invalid');
+                cmtErr.style.display = 'block';
+                valid = false;
+            }
+            if (!valid) e.preventDefault();
+        });
+    })();
+    </script>
 
 </body>
 </html>
