@@ -48,6 +48,13 @@ public class AdminRepository {
                 .findFirst();
     }
 
+    public synchronized Optional<Admin> findByEmail(String email) {
+        if (email == null) return Optional.empty();
+        return findAll().stream()
+                .filter(a -> email.equalsIgnoreCase(a.getEmail()))
+                .findFirst();
+    }
+
     public synchronized void save(Admin admin) {
         List<Admin> all = findAll();
         boolean updated = false;

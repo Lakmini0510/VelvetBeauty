@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
+
 <body>
 
     <header th:replace="~{fragments/layout :: header}"></header>
@@ -8,9 +10,10 @@
 
     <main class="main-content">
         <div class="container">
-            
+
             <!-- Admin Header & Role Info -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px;">
                 <div>
                     <span class="badge badge-rose" style="margin-bottom: 6px;">Executive Management Console</span>
                     <h2 style="font-size: 2.2rem;">Velvet Beauty Control Dashboard</h2>
@@ -28,7 +31,8 @@
             </div>
 
             <!-- Admin Nav Submenu -->
-            <div class="card" style="padding: 12px 20px; margin-bottom: 32px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+            <div class="card"
+                style="padding: 12px 20px; margin-bottom: 32px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
                 <a th:href="@{/admin/dashboard}" class="btn btn-primary btn-sm">Dashboard</a>
                 <a th:href="@{/admin/customers}" class="btn btn-outline btn-sm">Customers (User Mgmt)</a>
                 <a th:href="@{/admin/services}" class="btn btn-outline btn-sm">Services Catalog</a>
@@ -39,56 +43,58 @@
             </div>
 
             <!-- KPI Metric Cards -->
-            <div class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 36px;">
+            <div class="grid-3"
+                style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 36px;">
                 <div class="card" style="padding: 22px;">
                     <small style="color: var(--text-muted); text-transform: uppercase;">Total Billed Revenue</small>
-                    <div style="font-size: 2rem; font-weight: 700; color: var(--gold-light); margin-top: 6px;" 
-                         th:text="'$' + ${#numbers.formatDecimal(totalRevenue, 1, 2)}">$0.00</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--gold-light); margin-top: 6px;"
+                        th:text="'Rs. ' + ${#numbers.formatDecimal(totalRevenue, 1, 2)}">Rs. 0.00</div>
                     <small style="color: var(--status-success);">From completed sessions</small>
                 </div>
 
                 <div class="card" style="padding: 22px;">
                     <small style="color: var(--text-muted); text-transform: uppercase;">Appointments Booked</small>
-                    <div style="font-size: 2rem; font-weight: 700; color: var(--rose-gold); margin-top: 6px;" 
-                         th:text="${totalAppointments}">0</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--rose-gold); margin-top: 6px;"
+                        th:text="${totalAppointments}">0</div>
                     <small style="color: var(--text-secondary);">Across all stylists</small>
                 </div>
 
                 <div class="card" style="padding: 22px;">
                     <small style="color: var(--text-muted); text-transform: uppercase;">Registered Clients</small>
-                    <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-top: 6px;" 
-                         th:text="${totalCustomers}">0</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-top: 6px;"
+                        th:text="${totalCustomers}">0</div>
                     <small style="color: var(--gold-light);">Regular &amp; VIP tiers</small>
                 </div>
 
                 <div class="card" style="padding: 22px;">
                     <small style="color: var(--text-muted); text-transform: uppercase;">Service Catalog</small>
-                    <div style="font-size: 2rem; font-weight: 700; color: var(--gold-light); margin-top: 6px;" 
-                         th:text="${totalServices}">0</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--gold-light); margin-top: 6px;"
+                        th:text="${totalServices}">0</div>
                     <small style="color: var(--text-secondary);">Active treatments</small>
                 </div>
 
                 <div class="card" style="padding: 22px;">
                     <small style="color: var(--text-muted); text-transform: uppercase;">Stylist Staff</small>
-                    <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-top: 6px;" 
-                         th:text="${totalStylists}">0</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-top: 6px;"
+                        th:text="${totalStylists}">0</div>
                     <small style="color: var(--text-secondary);">Full &amp; Part-time</small>
                 </div>
 
                 <div class="card" style="padding: 22px;">
                     <small style="color: var(--text-muted); text-transform: uppercase;">Pending Reviews</small>
-                    <div style="font-size: 2rem; font-weight: 700; color: var(--status-warning); margin-top: 6px;" 
-                         th:text="${pendingReviews}">0</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--status-warning); margin-top: 6px;"
+                        th:text="${pendingReviews}">0</div>
                     <small style="color: var(--text-secondary);">Awaiting moderation</small>
                 </div>
             </div>
 
             <!-- Two Column Layout: Recent Appointments & Activity Logs -->
             <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 28px;">
-                
+
                 <!-- Recent Appointments -->
                 <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <h3>Recent Appointments</h3>
                         <a th:href="@{/admin/appointments}" class="btn btn-outline btn-sm">View All</a>
                     </div>
@@ -106,18 +112,23 @@
                             </thead>
                             <tbody>
                                 <tr th:each="apt : ${recentAppointments}">
-                                    <td style="color: var(--gold-light); font-weight: 600;" th:text="${apt.id}">APT-01</td>
+                                    <td style="color: var(--gold-light); font-weight: 600;" th:text="${apt.id}">APT-01
+                                    </td>
                                     <td>
                                         <div th:text="${apt.customerName}">Client</div>
-                                        <small class="badge badge-vip" th:if="${apt.membershipType == 'PREMIUM'}" style="font-size: 0.65rem;">VIP</small>
-                                        <small class="badge badge-gold" th:if="${apt.membershipType != 'PREMIUM'}" style="font-size: 0.65rem;">REG</small>
+                                        <small class="badge badge-vip" th:if="${apt.membershipType == 'PREMIUM'}"
+                                            style="font-size: 0.65rem;">VIP</small>
+                                        <small class="badge badge-gold" th:if="${apt.membershipType != 'PREMIUM'}"
+                                            style="font-size: 0.65rem;">REG</small>
                                     </td>
                                     <td th:text="${apt.serviceName}">Service</td>
                                     <td th:text="${apt.appointmentDate}">Date</td>
                                     <td>
                                         <span th:if="${apt.status == 'BOOKED'}" class="badge badge-gold">BOOKED</span>
-                                        <span th:if="${apt.status == 'COMPLETED'}" class="badge badge-success">COMPLETED</span>
-                                        <span th:if="${apt.status == 'CANCELLED'}" class="badge badge-danger">CANCELLED</span>
+                                        <span th:if="${apt.status == 'COMPLETED'}"
+                                            class="badge badge-success">COMPLETED</span>
+                                        <span th:if="${apt.status == 'CANCELLED'}"
+                                            class="badge badge-danger">CANCELLED</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -127,19 +138,23 @@
 
                 <!-- Recent Administrative Activity Logs -->
                 <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <h3>Audit Trail (admin_logs.txt)</h3>
                         <a th:href="@{/admin/admins}" class="btn btn-outline btn-sm">Full Logs</a>
                     </div>
 
                     <div class="card" style="padding: 20px;">
                         <ul style="list-style: none; font-size: 0.85rem;">
-                            <li th:each="log : ${recentLogs}" style="border-bottom: 1px solid rgba(255,255,255,0.06); padding: 10px 0;">
+                            <li th:each="log : ${recentLogs}"
+                                style="border-bottom: 1px solid rgba(255,255,255,0.06); padding: 10px 0;">
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                                    <strong style="color: var(--gold-light);" th:text="${log.adminUsername}">Admin</strong>
+                                    <strong style="color: var(--gold-light);"
+                                        th:text="${log.adminUsername}">Admin</strong>
                                     <small style="color: var(--text-muted);" th:text="${log.timestamp}"></small>
                                 </div>
-                                <span class="badge badge-gold" style="font-size: 0.7rem; margin-bottom: 4px;" th:text="${log.action}">ACTION</span>
+                                <span class="badge badge-gold" style="font-size: 0.7rem; margin-bottom: 4px;"
+                                    th:text="${log.action}">ACTION</span>
                                 <p style="color: var(--text-secondary); margin-top: 4px;" th:text="${log.details}"></p>
                             </li>
                         </ul>
@@ -154,4 +169,5 @@
     <footer th:replace="~{fragments/layout :: footer}"></footer>
 
 </body>
+
 </html>

@@ -173,11 +173,11 @@ public class AdminController {
     }
 
     @PostMapping("/services/new")
-    public String createService(@RequestParam String name,
-                                @RequestParam String category,
-                                @RequestParam double basePrice,
-                                @RequestParam int durationMinutes,
-                                @RequestParam String description,
+    public String createService(@RequestParam(required = false) String name,
+                                @RequestParam(required = false) String category,
+                                @RequestParam(required = false) Double basePrice,
+                                @RequestParam(required = false) Integer durationMinutes,
+                                @RequestParam(required = false) String description,
                                 @RequestParam(required = false) String imageUrl,
                                 @RequestParam(required = false) String customProp,
                                 HttpSession session,
@@ -185,8 +185,33 @@ public class AdminController {
         Admin admin = verifyAdmin(session);
         if (admin == null) return "redirect:/login";
 
-        SalonService s = catalogService.createService(name, category, basePrice, durationMinutes, 
-                description, imageUrl, customProp);
+        if (name == null || name.trim().isEmpty() || name.trim().length() < 3) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Service name must be at least 3 characters.");
+            return "redirect:/admin/services/new";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidCategory(category)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Category must be HAIR, SKIN, or NAIL.");
+            return "redirect:/admin/services/new";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPrice(basePrice)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Base price must be a positive amount (Rs 0.01 – Rs 5,00,00,000).");
+            return "redirect:/admin/services/new";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidDuration(durationMinutes)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Duration must be between 5 and 480 minutes.");
+            return "redirect:/admin/services/new";
+        }
+        if (description == null || description.trim().length() < 10) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Description must be at least 10 characters.");
+            return "redirect:/admin/services/new";
+        }
+        if (com.salon.VelvetBeauty.util.ValidationUtil.containsDelimiter(name, description, customProp)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Input contains reserved delimiter characters (';;') which are not allowed.");
+            return "redirect:/admin/services/new";
+        }
+
+        SalonService s = catalogService.createService(name.trim(), category.trim().toUpperCase(), basePrice, durationMinutes,
+                description.trim(), imageUrl, customProp);
         adminService.logAction(admin.getUsername(), "CREATE_SERVICE", "Added new service: " + s.getName());
 
         redirectAttributes.addFlashAttribute("successMessage", "Service '" + s.getName() + "' created successfully!");
@@ -207,10 +232,10 @@ public class AdminController {
 
     @PostMapping("/services/edit/{id}")
     public String updateService(@PathVariable String id,
-                                @RequestParam String name,
-                                @RequestParam double basePrice,
-                                @RequestParam int durationMinutes,
-                                @RequestParam String description,
+                                @RequestParam(required = false) String name,
+                                @RequestParam(required = false) Double basePrice,
+                                @RequestParam(required = false) Integer durationMinutes,
+                                @RequestParam(required = false) String description,
                                 @RequestParam(required = false) String imageUrl,
                                 @RequestParam(defaultValue = "true") boolean active,
                                 @RequestParam(required = false) String customProp,
@@ -219,7 +244,28 @@ public class AdminController {
         Admin admin = verifyAdmin(session);
         if (admin == null) return "redirect:/login";
 
-        catalogService.updateService(id, name, basePrice, durationMinutes, description, imageUrl, active, customProp);
+        if (name == null || name.trim().isEmpty() || name.trim().length() < 3) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Service name must be at least 3 characters.");
+            return "redirect:/admin/services/edit/" + id;
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPrice(basePrice)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Base price must be a positive, valid amount.");
+            return "redirect:/admin/services/edit/" + id;
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidDuration(durationMinutes)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Duration must be between 5 and 480 minutes.");
+            return "redirect:/admin/services/edit/" + id;
+        }
+        if (description == null || description.trim().length() < 10) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Description must be at least 10 characters.");
+            return "redirect:/admin/services/edit/" + id;
+        }
+        if (com.salon.VelvetBeauty.util.ValidationUtil.containsDelimiter(name, description, customProp)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Input contains reserved delimiter characters (';;').");
+            return "redirect:/admin/services/edit/" + id;
+        }
+
+        catalogService.updateService(id, name.trim(), basePrice, durationMinutes, description.trim(), imageUrl, active, customProp);
         adminService.logAction(admin.getUsername(), "UPDATE_SERVICE", "Updated service ID: " + id);
 
         redirectAttributes.addFlashAttribute("successMessage", "Service updated successfully!");
@@ -258,26 +304,64 @@ public class AdminController {
     }
 
     @PostMapping("/stylists/new")
-    public String createStylist(@RequestParam String name,
-                                @RequestParam String specialty,
-                                @RequestParam String workingDays,
-                                @RequestParam String workingHours,
-                                @RequestParam String phone,
-                                @RequestParam String email,
+    public String createStylist(@RequestParam(required = false) String name,
+                                @RequestParam(required = false) String specialty,
+                                @RequestParam(required = false) String workingDays,
+                                @RequestParam(required = false) String workingHours,
+                                @RequestParam(required = false) String phone,
+                                @RequestParam(required = false) String email,
                                 @RequestParam(required = false) String imageUrl,
-                                @RequestParam String bio,
-                                @RequestParam String type,
-                                @RequestParam double rateOrSalary,
-                                @RequestParam double commissionOrBonus,
+                                @RequestParam(required = false) String bio,
+                                @RequestParam(required = false) String type,
+                                @RequestParam(required = false) Double rateOrSalary,
+                                @RequestParam(required = false) Double commissionOrBonus,
                                 @RequestParam(required = false) String extraParam,
                                 HttpSession session,
                                 RedirectAttributes redirectAttributes) {
         Admin admin = verifyAdmin(session);
         if (admin == null) return "redirect:/login";
 
-        Stylist s = stylistService.createStylist(name, specialty, workingDays, workingHours, phone, email, 
-                imageUrl, bio, type, rateOrSalary, commissionOrBonus, extraParam);
-        adminService.logAction(admin.getUsername(), "CREATE_STYLIST", "Added stylist: " + s.getName() + " (" + type + ")");
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidName(name)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Stylist full name must be 2-60 alphabetic characters.");
+            return "redirect:/admin/stylists/new";
+        }
+        if (specialty == null || specialty.trim().isEmpty() || specialty.trim().length() < 3) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Specialty description is required (at least 3 characters).");
+            return "redirect:/admin/stylists/new";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidEmail(email)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please provide a valid work email address.");
+            return "redirect:/admin/stylists/new";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPhone(phone)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please provide a valid contact phone number.");
+            return "redirect:/admin/stylists/new";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPrice(rateOrSalary)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Salary/hourly rate must be a positive amount.");
+            return "redirect:/admin/stylists/new";
+        }
+        if (commissionOrBonus == null || commissionOrBonus < 0 || commissionOrBonus > 1.0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Commission/bonus rate must be between 0.00 and 1.00 (e.g. 0.08 = 8%).");
+            return "redirect:/admin/stylists/new";
+        }
+        if (bio == null || bio.trim().length() < 10) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Professional bio must be at least 10 characters.");
+            return "redirect:/admin/stylists/new";
+        }
+        if (com.salon.VelvetBeauty.util.ValidationUtil.containsDelimiter(name, specialty, bio, workingDays, workingHours)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Input contains reserved characters (';;') which are not allowed.");
+            return "redirect:/admin/stylists/new";
+        }
+        String stylistType = (type != null && ("FULL_TIME".equalsIgnoreCase(type.trim()) || "PART_TIME".equalsIgnoreCase(type.trim())))
+                ? type.trim().toUpperCase() : "FULL_TIME";
+
+        Stylist s = stylistService.createStylist(name.trim(), specialty.trim(), 
+                workingDays != null ? workingDays.trim() : "Monday - Friday",
+                workingHours != null ? workingHours.trim() : "09:00 - 18:00",
+                phone.trim(), email.trim(), imageUrl, bio.trim(),
+                stylistType, rateOrSalary, commissionOrBonus, extraParam);
+        adminService.logAction(admin.getUsername(), "CREATE_STYLIST", "Added stylist: " + s.getName() + " (" + stylistType + ")");
 
         redirectAttributes.addFlashAttribute("successMessage", "Stylist '" + s.getName() + "' onboarded successfully!");
         return "redirect:/admin/stylists";
@@ -297,13 +381,13 @@ public class AdminController {
 
     @PostMapping("/stylists/edit/{id}")
     public String updateStylist(@PathVariable String id,
-                                @RequestParam String name,
-                                @RequestParam String specialty,
-                                @RequestParam String workingDays,
-                                @RequestParam String workingHours,
-                                @RequestParam String phone,
-                                @RequestParam String email,
-                                @RequestParam String bio,
+                                @RequestParam(required = false) String name,
+                                @RequestParam(required = false) String specialty,
+                                @RequestParam(required = false) String workingDays,
+                                @RequestParam(required = false) String workingHours,
+                                @RequestParam(required = false) String phone,
+                                @RequestParam(required = false) String email,
+                                @RequestParam(required = false) String bio,
                                 @RequestParam(required = false) String imageUrl,
                                 @RequestParam(defaultValue = "true") boolean active,
                                 HttpSession session,
@@ -311,7 +395,32 @@ public class AdminController {
         Admin admin = verifyAdmin(session);
         if (admin == null) return "redirect:/login";
 
-        stylistService.updateStylist(id, name, specialty, workingDays, workingHours, phone, email, bio, imageUrl, active);
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidName(name)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Stylist name must be 2-60 alphabetic characters.");
+            return "redirect:/admin/stylists/edit/" + id;
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidEmail(email)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please provide a valid work email address.");
+            return "redirect:/admin/stylists/edit/" + id;
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPhone(phone)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please provide a valid contact phone number.");
+            return "redirect:/admin/stylists/edit/" + id;
+        }
+        if (bio == null || bio.trim().length() < 10) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Professional bio must be at least 10 characters.");
+            return "redirect:/admin/stylists/edit/" + id;
+        }
+        if (com.salon.VelvetBeauty.util.ValidationUtil.containsDelimiter(name, specialty, bio, workingDays, workingHours)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Input contains reserved characters (';;').");
+            return "redirect:/admin/stylists/edit/" + id;
+        }
+
+        stylistService.updateStylist(id, name.trim(),
+                specialty != null ? specialty.trim() : "",
+                workingDays != null ? workingDays.trim() : "",
+                workingHours != null ? workingHours.trim() : "",
+                phone.trim(), email.trim(), bio.trim(), imageUrl, active);
         adminService.logAction(admin.getUsername(), "UPDATE_STYLIST", "Updated stylist ID: " + id);
 
         redirectAttributes.addFlashAttribute("successMessage", "Stylist profile updated!");
@@ -389,13 +498,13 @@ public class AdminController {
     }
 
     @PostMapping("/admins/new")
-    public String createAdminAccount(@RequestParam String username,
-                                     @RequestParam String password,
-                                     @RequestParam String fullName,
-                                     @RequestParam String email,
-                                     @RequestParam String phone,
-                                     @RequestParam String adminRole,
-                                     @RequestParam String department,
+    public String createAdminAccount(@RequestParam(required = false) String username,
+                                     @RequestParam(required = false) String password,
+                                     @RequestParam(required = false) String fullName,
+                                     @RequestParam(required = false) String email,
+                                     @RequestParam(required = false) String phone,
+                                     @RequestParam(required = false) String adminRole,
+                                     @RequestParam(required = false) String department,
                                      HttpSession session,
                                      RedirectAttributes redirectAttributes) {
         Admin admin = verifyAdmin(session);
@@ -406,8 +515,46 @@ public class AdminController {
             return "redirect:/admin/admins";
         }
 
-        adminService.registerAdmin(username, password, fullName, email, phone, adminRole, department, admin.getUsername());
-        redirectAttributes.addFlashAttribute("successMessage", "Admin account created for " + fullName);
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidUsername(username)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Username must be 3-30 alphanumeric characters or underscores.");
+            return "redirect:/admin/admins";
+        }
+        if (userService.isUsernameTaken(username.trim())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Username '" + username.trim() + "' is already taken.");
+            return "redirect:/admin/admins";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPassword(password)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Password must be 6-64 characters and cannot contain ';;'.");
+            return "redirect:/admin/admins";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidName(fullName)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Full name must be 2-60 alphabetic characters.");
+            return "redirect:/admin/admins";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidEmail(email)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please provide a valid email address.");
+            return "redirect:/admin/admins";
+        }
+        if (userService.isEmailTaken(email.trim())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Email '" + email.trim() + "' is already registered to another account.");
+            return "redirect:/admin/admins";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPhone(phone)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please provide a valid phone number.");
+            return "redirect:/admin/admins";
+        }
+        if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidAdminRole(adminRole)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Admin role must be SALON_OWNER or RECEPTIONIST.");
+            return "redirect:/admin/admins";
+        }
+        if (department == null || department.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Department field is required.");
+            return "redirect:/admin/admins";
+        }
+
+        adminService.registerAdmin(username.trim(), password, fullName.trim(), email.trim(),
+                phone.trim(), adminRole.trim().toUpperCase(), department.trim(), admin.getUsername());
+        redirectAttributes.addFlashAttribute("successMessage", "Admin account created for " + fullName.trim());
         return "redirect:/admin/admins";
     }
 

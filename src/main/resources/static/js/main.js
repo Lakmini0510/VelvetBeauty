@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const discountAmount = Math.round(subtotal * discountRate * 100) / 100;
         const finalPrice = Math.max(0, Math.round((subtotal - discountAmount) * 100) / 100);
 
-        if (baseDisplay) baseDisplay.textContent = 'Rs' + subtotal.toFixed(2);
-        if (discountDisplay) discountDisplay.textContent = '-Rs' + discountAmount.toFixed(2);
-        if (priceDisplay) priceDisplay.textContent = 'Rs' + finalPrice.toFixed(2);
+        if (baseDisplay) baseDisplay.textContent = 'Rs. ' + subtotal.toFixed(2);
+        if (discountDisplay) discountDisplay.textContent = '-Rs. ' + discountAmount.toFixed(2);
+        if (priceDisplay) priceDisplay.textContent = 'Rs. ' + finalPrice.toFixed(2);
     }
 
     if (serviceSelect) {
@@ -73,23 +73,23 @@ document.addEventListener('DOMContentLoaded', function () {
         if (category === 'HAIR') {
             options = [
                 { label: 'Short (Standard)', surcharge: 0 },
-                { label: 'Medium (+ Rs3000.00)', surcharge: 3000 },
-                { label: 'Long (+ Rs6000.00)', surcharge: 6000 },
-                { label: 'Extra Long (+ Rs10000.00)', surcharge: 10000 }
+                { label: 'Medium (+ Rs. 3000.00)', surcharge: 3000 },
+                { label: 'Long (+ Rs. 6000.00)', surcharge: 6000 },
+                { label: 'Extra Long (+ Rs. 10500.00)', surcharge: 10500 }
             ];
         } else if (category === 'SKIN') {
             options = [
                 { label: 'Standard Hydrating (Included)', surcharge: 0 },
-                { label: 'Organic Herbal Elixir (+ Rs.4500.00)', surcharge: 4500 },
-                { label: 'Hyaluronic Glass Skin (+ Rs.7500.00)', surcharge: 7500 },
-                { label: '24K Gold Luxury Radiance (+ Rs.12000.00)', surcharge: 12000 }
+                { label: 'Organic Herbal Elixir (+ Rs. 4500.00)', surcharge: 4500 },
+                { label: 'Hyaluronic Glass Skin (+ Rs. 7500.00)', surcharge: 7500 },
+                { label: '24K Gold Luxury Radiance (+ Rs. 13500.00)', surcharge: 13500 }
             ];
         } else if (category === 'NAIL') {
             options = [
                 { label: 'Classic High-Gloss (Included)', surcharge: 0 },
-                { label: 'Long-Wear Gel Polish (+ Rs.1200.00)', surcharge: 1200 },
-                { label: 'Acrylic Sculpted Extensions (+ Rs.6000.00)', surcharge: 6000 },
-                { label: 'Hand-Painted Designer Nail Art (+ Rs.9000.00)', surcharge: 9000 }
+                { label: 'Long-Wear Gel Polish (+ Rs. 3600.00)', surcharge: 3600 },
+                { label: 'Acrylic Sculpted Extensions (+ Rs. 7500.00)', surcharge: 7500 },
+                { label: 'Hand-Painted Designer Nail Art (+ Rs. 10500.00)', surcharge: 10500 }
             ];
         } else {
             options = [{ label: 'Standard Service Protocol', surcharge: 0 }];
@@ -145,4 +145,114 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (stylistSelect) stylistSelect.addEventListener('change', fetchAvailableSlots);
     if (dateInput) dateInput.addEventListener('change', fetchAvailableSlots);
+
+    // 4. Booking Form Validation
+    const bookingForm = document.getElementById('bookingForm');
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', function (e) {
+            let valid = true;
+            const srv = document.getElementById('bookingServiceSelect');
+            const sty = document.getElementById('bookingStylistSelect');
+            const dte = document.getElementById('bookingDateInput');
+            const slt = document.getElementById('bookingTimeSlotSelect');
+            const nts = document.getElementById('bookingNotes');
+
+            const srvErr = document.getElementById('serviceErr');
+            const styErr = document.getElementById('stylistErr');
+            const dteErr = document.getElementById('dateErr');
+            const sltErr = document.getElementById('slotErr');
+            const ntsErr = document.getElementById('notesErr');
+
+            if (srv && (!srv.value || srv.value === '')) {
+                srv.classList.add('is-invalid');
+                if (srvErr) srvErr.style.display = 'block';
+                valid = false;
+            } else if (srv) {
+                srv.classList.remove('is-invalid');
+                if (srvErr) srvErr.style.display = 'none';
+            }
+
+            if (sty && (!sty.value || sty.value === '')) {
+                sty.classList.add('is-invalid');
+                if (styErr) styErr.style.display = 'block';
+                valid = false;
+            } else if (sty) {
+                sty.classList.remove('is-invalid');
+                if (styErr) styErr.style.display = 'none';
+            }
+
+            if (dte) {
+                const today = new Date().toISOString().split('T')[0];
+                if (!dte.value || dte.value < today) {
+                    dte.classList.add('is-invalid');
+                    if (dteErr) dteErr.style.display = 'block';
+                    valid = false;
+                } else {
+                    dte.classList.remove('is-invalid');
+                    if (dteErr) dteErr.style.display = 'none';
+                }
+            }
+
+            if (slt && (!slt.value || slt.value.startsWith('No slots'))) {
+                slt.classList.add('is-invalid');
+                if (sltErr) sltErr.style.display = 'block';
+                valid = false;
+            } else if (slt) {
+                slt.classList.remove('is-invalid');
+                if (sltErr) sltErr.style.display = 'none';
+            }
+
+            if (nts && nts.value) {
+                if (nts.value.length > 500 || nts.value.includes(';;')) {
+                    nts.classList.add('is-invalid');
+                    if (ntsErr) ntsErr.style.display = 'block';
+                    valid = false;
+                } else {
+                    nts.classList.remove('is-invalid');
+                    if (ntsErr) ntsErr.style.display = 'none';
+                }
+            }
+
+            if (!valid) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // 5. Reschedule Form Validation
+    const rescheduleForm = document.getElementById('rescheduleForm');
+    if (rescheduleForm) {
+        rescheduleForm.addEventListener('submit', function (e) {
+            let valid = true;
+            const dte = rescheduleForm.querySelector('#bookingDateInput');
+            const slt = rescheduleForm.querySelector('#bookingTimeSlotSelect');
+            const dteErr = document.getElementById('reschedDateErr');
+            const sltErr = document.getElementById('reschedSlotErr');
+
+            if (dte) {
+                const today = new Date().toISOString().split('T')[0];
+                if (!dte.value || dte.value < today) {
+                    dte.classList.add('is-invalid');
+                    if (dteErr) dteErr.style.display = 'block';
+                    valid = false;
+                } else {
+                    dte.classList.remove('is-invalid');
+                    if (dteErr) dteErr.style.display = 'none';
+                }
+            }
+
+            if (slt && (!slt.value || slt.value.startsWith('No slots'))) {
+                slt.classList.add('is-invalid');
+                if (sltErr) sltErr.style.display = 'block';
+                valid = false;
+            } else if (slt) {
+                slt.classList.remove('is-invalid');
+                if (sltErr) sltErr.style.display = 'none';
+            }
+
+            if (!valid) {
+                e.preventDefault();
+            }
+        });
+    }
 });
