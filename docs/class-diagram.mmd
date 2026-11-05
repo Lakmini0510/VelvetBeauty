@@ -1,0 +1,959 @@
+---
+config:
+  layout: elk
+---
+classDiagram
+direction TB
+namespace app {
+  class VelvetBeautyApplication {
+    +main(args: String[])$ void
+  }
+}
+namespace controller {
+  class AuthController {
+    -userService: UserService
+    -adminService: AdminService
+    +AuthController(userService: UserService,⁂)
+    ǀ(adminService: AdminService)
+    +showLoginForm(session: HttpSession, model: Model) String
+    +handleLogin(username: String, password: String,⁂)
+    ǀ(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +showRegisterForm(session: HttpSession) String
+    +handleRegister(username: String, password: String,⁂)
+    ǀ(fullName: String, email: String, phone: String,⁂)
+    ǀ(membershipType: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +handleLogout(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+  }
+  class CustomerController {
+    -userService: UserService
+    +CustomerController(userService: UserService)
+    +showProfile(session: HttpSession, model: Model) String
+    +updateProfile(email: String, phone: String,⁂)
+    ǀ(password: String, membershipType: String,⁂)
+    ǀ(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+  }
+  class HomeController {
+    -catalogService: SalonCatalogService
+    -stylistService: StylistService
+    -reviewService: ReviewService
+    +HomeController(catalogService: SalonCatalogService,⁂)
+    ǀ(stylistService: StylistService,⁂)
+    ǀ(reviewService: ReviewService)
+    +index(model: Model) String
+  }
+  class ServiceCatalogController {
+    -catalogService: SalonCatalogService
+    +ServiceCatalogController(catalogService: SalonCatalogService)
+    +listServices(category: String, query: String,⁂)
+    ǀ(model: Model) String
+  }
+  class StylistCatalogController {
+    -stylistService: StylistService
+    +StylistCatalogController(stylistService: StylistService)
+    +listStylists(query: String, model: Model) String
+  }
+  class AppointmentController {
+    -appointmentService: AppointmentService
+    -catalogService: SalonCatalogService
+    -stylistService: StylistService
+    -userService: UserService
+    +AppointmentController(appointmentService: AppointmentService,⁂)
+    ǀ(catalogService: SalonCatalogService,⁂)
+    ǀ(stylistService: StylistService,⁂)
+    ǀ(userService: UserService)
+    +showBookingPage(serviceId: String, stylistId: String,⁂)
+    ǀ(session: HttpSession, model: Model) String
+    +handleBooking(serviceId: String,⁂)
+    ǀ(customizationOption: String, stylistId: String,⁂)
+    ǀ(appointmentDate: String, timeSlot: String,⁂)
+    ǀ(notes: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +listMyAppointments(session: HttpSession, model: Model) String
+    +handleCancel(id: String, reason: String,⁂)
+    ǀ(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +showReschedulePage(id: String, session: HttpSession,⁂)
+    ǀ(model: Model) String
+    +handleReschedule(id: String, newDate: String,⁂)
+    ǀ(newTimeSlot: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +getAvailableSlotsAjax(stylistId: String, date: String) List~String~
+  }
+  class ReviewCatalogController {
+    -reviewService: ReviewService
+    -catalogService: SalonCatalogService
+    -stylistService: StylistService
+    -appointmentService: AppointmentService
+    +ReviewCatalogController(reviewService: ReviewService,⁂)
+    ǀ(catalogService: SalonCatalogService,⁂)
+    ǀ(stylistService: StylistService,⁂)
+    ǀ(appointmentService: AppointmentService)
+    +listReviews(serviceId: String, stylistId: String,⁂)
+    ǀ(model: Model) String
+    +showReviewForm(session: HttpSession, model: Model) String
+    +handleSubmitReview(serviceId: String, stylistId: String,⁂)
+    ǀ(rating: int, comment: String, appointmentId: String,⁂)
+    ǀ(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +showEditForm(id: String, session: HttpSession,⁂)
+    ǀ(model: Model) String
+    +handleEdit(id: String, rating: int, comment: String,⁂)
+    ǀ(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +handleDelete(id: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+  }
+  class AdminController {
+    -userService: UserService
+    -adminService: AdminService
+    -catalogService: SalonCatalogService
+    -stylistService: StylistService
+    -appointmentService: AppointmentService
+    -reviewService: ReviewService
+    +AdminController(userService: UserService,⁂)
+    ǀ(adminService: AdminService,⁂)
+    ǀ(catalogService: SalonCatalogService,⁂)
+    ǀ(stylistService: StylistService,⁂)
+    ǀ(appointmentService: AppointmentService,⁂)
+    ǀ(reviewService: ReviewService)
+    -verifyAdmin(session: HttpSession) Admin
+    +dashboard(session: HttpSession, model: Model,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +listCustomers(search: String, session: HttpSession,⁂)
+    ǀ(model: Model, redirectAttributes: RedirectAttributes) String
+    +toggleCustomerMembership(id: String,⁂)
+    ǀ(membershipType: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +deleteCustomer(id: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +manageServices(session: HttpSession, model: Model) String
+    +newServiceForm(session: HttpSession, model: Model) String
+    +createService(name: String, category: String,⁂)
+    ǀ(basePrice: double, durationMinutes: int,⁂)
+    ǀ(description: String, imageUrl: String,⁂)
+    ǀ(customProp: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +editServiceForm(id: String, session: HttpSession,⁂)
+    ǀ(model: Model) String
+    +updateService(id: String, name: String, basePrice: double,⁂)
+    ǀ(durationMinutes: int, description: String,⁂)
+    ǀ(imageUrl: String, active: boolean,⁂)
+    ǀ(customProp: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +deleteService(id: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +manageStylists(session: HttpSession, model: Model) String
+    +newStylistForm(session: HttpSession) String
+    +createStylist(name: String, specialty: String,⁂)
+    ǀ(workingDays: String, workingHours: String,⁂)
+    ǀ(phone: String, email: String, imageUrl: String,⁂)
+    ǀ(bio: String, type: String, rateOrSalary: double,⁂)
+    ǀ(commissionOrBonus: double, extraParam: String,⁂)
+    ǀ(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +editStylistForm(id: String, session: HttpSession,⁂)
+    ǀ(model: Model) String
+    +updateStylist(id: String, name: String, specialty: String,⁂)
+    ǀ(workingDays: String, workingHours: String,⁂)
+    ǀ(phone: String, email: String, bio: String,⁂)
+    ǀ(imageUrl: String, active: boolean,⁂)
+    ǀ(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +deleteStylist(id: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +manageAppointments(status: String, session: HttpSession,⁂)
+    ǀ(model: Model) String
+    +updateAppointmentStatus(id: String, status: String,⁂)
+    ǀ(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +deleteAppointment(id: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +manageAdmins(session: HttpSession, model: Model) String
+    +createAdminAccount(username: String, password: String,⁂)
+    ǀ(fullName: String, email: String, phone: String,⁂)
+    ǀ(adminRole: String, department: String,⁂)
+    ǀ(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +deleteAdminAccount(id: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +manageReviews(session: HttpSession, model: Model) String
+    +moderateReview(id: String, status: String,⁂)
+    ǀ(session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+    +deleteReviewAdmin(id: String, session: HttpSession,⁂)
+    ǀ(redirectAttributes: RedirectAttributes) String
+  }
+  class GlobalControllerAdvice {
+    +getCurrentUser(session: HttpSession) User
+    +getIsAdmin(session: HttpSession) boolean
+    +getIsCustomer(session: HttpSession) boolean
+    +getIsPremium(session: HttpSession) boolean
+  }
+}
+namespace service {
+  class UserService {
+    -userRepository: UserRepository
+    -adminRepository: AdminRepository
+    +UserService(userRepository: UserRepository,⁂)
+    ǀ(adminRepository: AdminRepository)
+    +authenticate(username: String, password: String) Optional~User~
+    +registerCustomer(username: String, password: String,⁂)
+    ǀ(fullName: String, email: String, phone: String,⁂)
+    ǀ(membershipType: String) Customer
+    +getAllCustomers() List~Customer~
+    +getCustomerById(id: String) Optional~Customer~
+    +getCustomerByUsername(username: String) Optional~Customer~
+    +updateProfile(id: String, email: String, phone: String,⁂)
+    ǀ(password: String, membershipType: String) boolean
+    +deleteCustomer(id: String) boolean
+    +isUsernameTaken(username: String) boolean
+  }
+  class AdminService {
+    -adminRepository: AdminRepository
+    +AdminService(adminRepository: AdminRepository)
+    +getAllAdmins() List~Admin~
+    +getAdminById(id: String) Optional~Admin~
+    +getAdminByUsername(username: String) Optional~Admin~
+    +registerAdmin(username: String, password: String,⁂)
+    ǀ(fullName: String, email: String, phone: String,⁂)
+    ǀ(adminRole: String, department: String,⁂)
+    ǀ(registeredBy: String) Admin
+    +updateAdmin(id: String, email: String, phone: String,⁂)
+    ǀ(password: String, adminRole: String,⁂)
+    ǀ(department: String, modifiedBy: String) boolean
+    +deleteAdmin(id: String, deletedBy: String) boolean
+    +logAction(adminUsername: String, action: String,⁂)
+    ǀ(details: String) void
+    +getActivityLogs() List~AdminActivityLog~
+  }
+  class SalonCatalogService {
+    -serviceRepository: ServiceRepository
+    +SalonCatalogService(serviceRepository: ServiceRepository)
+    +getAllServices() List~SalonService~
+    +getServicesByCategory(category: String) List~SalonService~
+    +searchServices(query: String, category: String) List~SalonService~
+    +getServiceById(id: String) Optional~SalonService~
+    +createService(name: String, category: String,⁂)
+    ǀ(basePrice: double, durationMinutes: int,⁂)
+    ǀ(description: String, imageUrl: String,⁂)
+    ǀ(customProp: String) SalonService
+    +updateService(id: String, name: String, basePrice: double,⁂)
+    ǀ(durationMinutes: int, description: String,⁂)
+    ǀ(imageUrl: String, active: boolean,⁂)
+    ǀ(customProp: String) boolean
+    +deleteService(id: String) boolean
+  }
+  class StylistService {
+    -stylistRepository: StylistRepository
+    +StylistService(stylistRepository: StylistRepository)
+    +getAllStylists() List~Stylist~
+    +getActiveStylists() List~Stylist~
+    +getStylistById(id: String) Optional~Stylist~
+    +searchStylists(query: String) List~Stylist~
+    +createStylist(name: String, specialty: String,⁂)
+    ǀ(workingDays: String, workingHours: String,⁂)
+    ǀ(phone: String, email: String, imageUrl: String,⁂)
+    ǀ(bio: String, type: String, rateOrSalary: double,⁂)
+    ǀ(commissionOrBonus: double, extraParam: String) Stylist
+    +updateStylist(id: String, name: String, specialty: String,⁂)
+    ǀ(workingDays: String, workingHours: String,⁂)
+    ǀ(phone: String, email: String, bio: String,⁂)
+    ǀ(imageUrl: String, active: boolean) boolean
+    +deleteStylist(id: String) boolean
+  }
+  class AppointmentService {
+    +STANDARD_TIME_SLOTS: List~String~$
+    -appointmentRepository: AppointmentRepository
+    -userRepository: UserRepository
+    -catalogService: SalonCatalogService
+    -stylistService: StylistService
+    +AppointmentService(appointmentRepository: AppointmentRepository,⁂)
+    ǀ(userRepository: UserRepository,⁂)
+    ǀ(catalogService: SalonCatalogService,⁂)
+    ǀ(stylistService: StylistService)
+    +isSlotAvailable(stylistId: String, date: LocalDate,⁂)
+    ǀ(timeSlot: String, excludeAppointmentId: String) boolean
+    +getAvailableSlots(stylistId: String, date: LocalDate) List~String~
+    +getAllAppointments() List~Appointment~
+    +getAppointmentsByCustomer(customerId: String) List~Appointment~
+    +getAppointmentById(id: String) Optional~Appointment~
+    +bookAppointment(customer: Customer, serviceId: String,⁂)
+    ǀ(customizationOption: String, stylistId: String,⁂)
+    ǀ(date: LocalDate, timeSlot: String, notes: String) Appointment
+    +rescheduleAppointment(appointmentId: String,⁂)
+    ǀ(newDate: LocalDate, newTimeSlot: String) boolean
+    +cancelAppointment(appointmentId: String, reason: String) Appointment
+    +updateStatus(appointmentId: String, status: String) boolean
+    +deleteAppointment(appointmentId: String) boolean
+    -calculateHoursRemaining(dateStr: String,⁂)
+    ǀ(timeSlotStr: String) long
+  }
+  class ReviewService {
+    -reviewRepository: ReviewRepository
+    -appointmentRepository: AppointmentRepository
+    +ReviewService(reviewRepository: ReviewRepository,⁂)
+    ǀ(appointmentRepository: AppointmentRepository)
+    +getAllReviews() List~Review~
+    +getApprovedReviews() List~Review~
+    +getReviewsByService(serviceId: String) List~Review~
+    +getReviewsByStylist(stylistId: String) List~Review~
+    +getReviewById(id: String) Optional~Review~
+    +submitReview(customerId: String, customerName: String,⁂)
+    ǀ(serviceId: String, serviceName: String,⁂)
+    ǀ(stylistId: String, stylistName: String, rating: int,⁂)
+    ǀ(comment: String, appointmentId: String) Review
+    +updateReview(id: String, rating: int, comment: String) boolean
+    +moderateReview(id: String, status: String) boolean
+    +deleteReview(id: String) boolean
+    +getAverageRating() double
+  }
+}
+namespace repository {
+  class UserRepository {
+    -FILE_NAME: String$
+    -fileStorage: FileStorageManager
+    +UserRepository(fileStorage: FileStorageManager)
+    +findAll() List~Customer~
+    +findById(id: String) Optional~Customer~
+    +findByUsername(username: String) Optional~Customer~
+    +findByEmail(email: String) Optional~Customer~
+    +save(customer: Customer) void
+    +deleteById(id: String) boolean
+    +saveAll(customers: List~Customer~) void
+    -parseLine(line: String) Customer
+  }
+  class AdminRepository {
+    -ADMIN_FILE: String$
+    -LOG_FILE: String$
+    -fileStorage: FileStorageManager
+    +AdminRepository(fileStorage: FileStorageManager)
+    +findAll() List~Admin~
+    +findById(id: String) Optional~Admin~
+    +findByUsername(username: String) Optional~Admin~
+    +save(admin: Admin) void
+    +deleteById(id: String) boolean
+    +saveAll(admins: List~Admin~) void
+    +logActivity(log: AdminActivityLog) void
+    +findAllLogs() List~AdminActivityLog~
+    -parseAdminLine(line: String) Admin
+  }
+  class ServiceRepository {
+    -FILE_NAME: String$
+    -fileStorage: FileStorageManager
+    +ServiceRepository(fileStorage: FileStorageManager)
+    +findAll() List~SalonService~
+    +findById(id: String) Optional~SalonService~
+    +findByCategory(category: String) List~SalonService~
+    +search(query: String, category: String) List~SalonService~
+    +save(service: SalonService) void
+    +deleteById(id: String) boolean
+    +saveAll(services: List~SalonService~) void
+    -parseLine(line: String) SalonService
+  }
+  class StylistRepository {
+    -FILE_NAME: String$
+    -fileStorage: FileStorageManager
+    +StylistRepository(fileStorage: FileStorageManager)
+    +findAll() List~Stylist~
+    +findById(id: String) Optional~Stylist~
+    +search(query: String) List~Stylist~
+    +save(stylist: Stylist) void
+    +deleteById(id: String) boolean
+    +saveAll(stylists: List~Stylist~) void
+    -parseLine(line: String) Stylist
+  }
+  class AppointmentRepository {
+    -FILE_NAME: String$
+    -fileStorage: FileStorageManager
+    +AppointmentRepository(fileStorage: FileStorageManager)
+    +findAll() List~Appointment~
+    +findById(id: String) Optional~Appointment~
+    +findByCustomerId(customerId: String) List~Appointment~
+    +findByStylistId(stylistId: String) List~Appointment~
+    +save(appointment: Appointment) void
+    +deleteById(id: String) boolean
+    +saveAll(appointments: List~Appointment~) void
+    -parseLine(line: String) Appointment
+  }
+  class ReviewRepository {
+    -FILE_NAME: String$
+    -fileStorage: FileStorageManager
+    +ReviewRepository(fileStorage: FileStorageManager)
+    +findAll() List~Review~
+    +findById(id: String) Optional~Review~
+    +findApproved() List~Review~
+    +findByServiceId(serviceId: String) List~Review~
+    +findByStylistId(stylistId: String) List~Review~
+    +save(review: Review) void
+    +deleteById(id: String) boolean
+    +saveAll(reviews: List~Review~) void
+    -parseLine(line: String) Review
+  }
+  class FileStorageManager {
+    -dataDirectoryPath: String
+    +FileStorageManager(dataDir: String)
+    -ensureDirectoryExists() void
+    +getFilePath(fileName: String) Path
+    +readAllLines(fileName: String) List~String~
+    +writeAllLines(fileName: String, lines: List~String~) void
+    +appendLine(fileName: String, line: String) void
+  }
+}
+namespace model {
+  class User {
+    <<abstract>>
+    -id: String
+    -username: String
+    -password: String
+    -fullName: String
+    -email: String
+    -phone: String
+    -role: String
+    -createdAt: String
+    +User()
+    +User(id: String, username: String, password: String,⁂)
+    ǀ(fullName: String, email: String, phone: String,⁂)
+    ǀ(role: String, createdAt: String)
+    +getId() String
+    +setId(id: String) void
+    +getUsername() String
+    +setUsername(username: String) void
+    +getPassword() String
+    +setPassword(password: String) void
+    +getFullName() String
+    +setFullName(fullName: String) void
+    +getEmail() String
+    +setEmail(email: String) void
+    +getPhone() String
+    +setPhone(phone: String) void
+    +getRole() String
+    +setRole(role: String) void
+    +getCreatedAt() String
+    +setCreatedAt(createdAt: String) void
+    +getRoleDescription()* String
+    +toFileRecord()* String
+  }
+  class Customer {
+    <<abstract>>
+    -membershipType: String
+    -loyaltyPoints: int
+    +Customer()
+    +Customer(id: String, username: String, password: String,⁂)
+    ǀ(fullName: String, email: String, phone: String,⁂)
+    ǀ(createdAt: String, membershipType: String,⁂)
+    ǀ(loyaltyPoints: int)
+    +getMembershipType() String
+    +setMembershipType(membershipType: String) void
+    +getLoyaltyPoints() int
+    +setLoyaltyPoints(loyaltyPoints: int) void
+    +getDiscountRate()* double
+    +applyDiscount(basePrice: double)* double
+    +calculateCancellationFee(appointmentPrice: double,⁂)*
+    ǀ(hoursBeforeAppointment: long)* double
+    +getMembershipPerks()* String
+  }
+  class RegularCustomer {
+    +RegularCustomer()
+    +RegularCustomer(id: String, username: String,⁂)
+    ǀ(password: String, fullName: String, email: String,⁂)
+    ǀ(phone: String, createdAt: String, loyaltyPoints: int)
+    +getDiscountRate() double
+    +applyDiscount(basePrice: double) double
+    +calculateCancellationFee(appointmentPrice: double,⁂)
+    ǀ(hoursBeforeAppointment: long) double
+    +getMembershipPerks() String
+    +getRoleDescription() String
+    +toFileRecord() String
+  }
+  class PremiumCustomer {
+    -vipTier: String
+    +PremiumCustomer()
+    +PremiumCustomer(id: String, username: String,⁂)
+    ǀ(password: String, fullName: String, email: String,⁂)
+    ǀ(phone: String, createdAt: String, loyaltyPoints: int,⁂)
+    ǀ(vipTier: String)
+    +getVipTier() String
+    +setVipTier(vipTier: String) void
+    +getDiscountRate() double
+    +applyDiscount(basePrice: double) double
+    +calculateCancellationFee(appointmentPrice: double,⁂)
+    ǀ(hoursBeforeAppointment: long) double
+    +getMembershipPerks() String
+    +getRoleDescription() String
+    +toFileRecord() String
+  }
+  class Admin {
+    -adminRole: String
+    -department: String
+    -lastActive: String
+    +Admin()
+    +Admin(id: String, username: String, password: String,⁂)
+    ǀ(fullName: String, email: String, phone: String,⁂)
+    ǀ(createdAt: String, adminRole: String,⁂)
+    ǀ(department: String)
+    +getAdminRole() String
+    +setAdminRole(adminRole: String) void
+    +getDepartment() String
+    +setDepartment(department: String) void
+    +getLastActive() String
+    +setLastActive(lastActive: String) void
+    +canApproveAppointments() boolean
+    +canManageUsers() boolean
+    +canManageServices() boolean
+    +canManageStylists() boolean
+    +canModerateReviews() boolean
+    +getRoleDescription() String
+    +toFileRecord() String
+  }
+  class AdminPrivileges {
+    <<interface>>
+    +canApproveAppointments()* boolean
+    +canManageUsers()* boolean
+    +canManageServices()* boolean
+    +canManageStylists()* boolean
+    +canModerateReviews()* boolean
+    +getAdminRole()* String
+  }
+  class AdminActivityLog {
+    -id: String
+    -adminUsername: String
+    -action: String
+    -details: String
+    -timestamp: String
+    +AdminActivityLog()
+    +AdminActivityLog(id: String, adminUsername: String,⁂)
+    ǀ(action: String, details: String, timestamp: String)
+    +getId() String
+    +setId(id: String) void
+    +getAdminUsername() String
+    +setAdminUsername(adminUsername: String) void
+    +getAction() String
+    +setAction(action: String) void
+    +getDetails() String
+    +setDetails(details: String) void
+    +getTimestamp() String
+    +setTimestamp(timestamp: String) void
+    +toFileRecord() String
+  }
+  class Stylist {
+    <<abstract>>
+    -id: String
+    -name: String
+    -specialty: String
+    -workingDays: String
+    -workingHours: String
+    -phone: String
+    -email: String
+    -imageUrl: String
+    -bio: String
+    -rating: double
+    -active: boolean
+    +Stylist()
+    +Stylist(id: String, name: String, specialty: String,⁂)
+    ǀ(workingDays: String, workingHours: String,⁂)
+    ǀ(phone: String, email: String, imageUrl: String,⁂)
+    ǀ(bio: String, rating: double, active: boolean)
+    +getId() String
+    +setId(id: String) void
+    +getName() String
+    +setName(name: String) void
+    +getSpecialty() String
+    +setSpecialty(specialty: String) void
+    +getWorkingDays() String
+    +setWorkingDays(workingDays: String) void
+    +getWorkingHours() String
+    +setWorkingHours(workingHours: String) void
+    +getPhone() String
+    +setPhone(phone: String) void
+    +getEmail() String
+    +setEmail(email: String) void
+    +getImageUrl() String
+    +setImageUrl(imageUrl: String) void
+    +getBio() String
+    +setBio(bio: String) void
+    +getRating() double
+    +setRating(rating: double) void
+    +isActive() boolean
+    +setActive(active: boolean) void
+    +displaySchedule()* String
+    +calculateMonthlyCompensation(appointmentsCompleted: int,⁂)*
+    ǀ(revenueBroughtIn: double)* double
+    +getEmploymentType()* String
+    +toFileRecord()* String
+  }
+  class FullTimeStylist {
+    -monthlyFixedSalary: double
+    -performanceBonusRate: double
+    -benefitsPackage: String
+    +FullTimeStylist()
+    +FullTimeStylist(id: String, name: String,⁂)
+    ǀ(specialty: String, workingDays: String,⁂)
+    ǀ(workingHours: String, phone: String, email: String,⁂)
+    ǀ(imageUrl: String, bio: String, rating: double,⁂)
+    ǀ(active: boolean, monthlyFixedSalary: double,⁂)
+    ǀ(performanceBonusRate: double,⁂)
+    ǀ(benefitsPackage: String)
+    +getMonthlyFixedSalary() double
+    +setMonthlyFixedSalary(monthlyFixedSalary: double) void
+    +getPerformanceBonusRate() double
+    +setPerformanceBonusRate(performanceBonusRate: double) void
+    +getBenefitsPackage() String
+    +setBenefitsPackage(benefitsPackage: String) void
+    +displaySchedule() String
+    +calculateMonthlyCompensation(appointmentsCompleted: int,⁂)
+    ǀ(revenueBroughtIn: double) double
+    +getEmploymentType() String
+    +toFileRecord() String
+  }
+  class PartTimeStylist {
+    -hourlyRate: double
+    -weeklyHours: int
+    -serviceCommissionRate: double
+    +PartTimeStylist()
+    +PartTimeStylist(id: String, name: String,⁂)
+    ǀ(specialty: String, workingDays: String,⁂)
+    ǀ(workingHours: String, phone: String, email: String,⁂)
+    ǀ(imageUrl: String, bio: String, rating: double,⁂)
+    ǀ(active: boolean, hourlyRate: double,⁂)
+    ǀ(weeklyHours: int, serviceCommissionRate: double)
+    +getHourlyRate() double
+    +setHourlyRate(hourlyRate: double) void
+    +getWeeklyHours() int
+    +setWeeklyHours(weeklyHours: int) void
+    +getServiceCommissionRate() double
+    +setServiceCommissionRate(serviceCommissionRate: double) void
+    +displaySchedule() String
+    +calculateMonthlyCompensation(appointmentsCompleted: int,⁂)
+    ǀ(revenueBroughtIn: double) double
+    +getEmploymentType() String
+    +toFileRecord() String
+  }
+  class SalonService {
+    <<abstract>>
+    -id: String
+    -name: String
+    -category: String
+    -basePrice: double
+    -durationMinutes: int
+    -description: String
+    -imageUrl: String
+    -active: boolean
+    +SalonService()
+    +SalonService(id: String, name: String, category: String,⁂)
+    ǀ(basePrice: double, durationMinutes: int,⁂)
+    ǀ(description: String, imageUrl: String,⁂)
+    ǀ(active: boolean)
+    +getId() String
+    +setId(id: String) void
+    +getName() String
+    +setName(name: String) void
+    +getCategory() String
+    +setCategory(category: String) void
+    +getBasePrice() double
+    +setBasePrice(basePrice: double) void
+    +getDurationMinutes() int
+    +setDurationMinutes(durationMinutes: int) void
+    +getDescription() String
+    +setDescription(description: String) void
+    +getImageUrl() String
+    +setImageUrl(imageUrl: String) void
+    +isActive() boolean
+    +setActive(active: boolean) void
+    +displayDetails()* String
+    +calculateCustomizedPrice(customizationOption: String)* double
+    +getCustomizationLabel()* String
+    +getAvailableCustomizations()* List~String~
+    +toFileRecord()* String
+  }
+  class HairService {
+    -defaultHairLength: String
+    +HairService()
+    +HairService(id: String, name: String, basePrice: double,⁂)
+    ǀ(durationMinutes: int, description: String,⁂)
+    ǀ(imageUrl: String, active: boolean,⁂)
+    ǀ(defaultHairLength: String)
+    +getDefaultHairLength() String
+    +setDefaultHairLength(defaultHairLength: String) void
+    +displayDetails() String
+    +calculateCustomizedPrice(customizationOption: String) double
+    +getCustomizationLabel() String
+    +getAvailableCustomizations() List~String~
+    +toFileRecord() String
+  }
+  class SkinService {
+    -recommendedSkinType: String
+    +SkinService()
+    +SkinService(id: String, name: String, basePrice: double,⁂)
+    ǀ(durationMinutes: int, description: String,⁂)
+    ǀ(imageUrl: String, active: boolean,⁂)
+    ǀ(recommendedSkinType: String)
+    +getRecommendedSkinType() String
+    +setRecommendedSkinType(recommendedSkinType: String) void
+    +displayDetails() String
+    +calculateCustomizedPrice(customizationOption: String) double
+    +getCustomizationLabel() String
+    +getAvailableCustomizations() List~String~
+    +toFileRecord() String
+  }
+  class NailService {
+    -defaultFinish: String
+    +NailService()
+    +NailService(id: String, name: String, basePrice: double,⁂)
+    ǀ(durationMinutes: int, description: String,⁂)
+    ǀ(imageUrl: String, active: boolean,⁂)
+    ǀ(defaultFinish: String)
+    +getDefaultFinish() String
+    +setDefaultFinish(defaultFinish: String) void
+    +displayDetails() String
+    +calculateCustomizedPrice(customizationOption: String) double
+    +getCustomizationLabel() String
+    +getAvailableCustomizations() List~String~
+    +toFileRecord() String
+  }
+  class Appointment {
+    -id: String
+    -customerId: String
+    -customerUsername: String
+    -customerName: String
+    -customerEmail: String
+    -customerPhone: String
+    -membershipType: String
+    -serviceId: String
+    -serviceName: String
+    -serviceCategory: String
+    -serviceCustomization: String
+    -stylistId: String
+    -stylistName: String
+    -appointmentDate: String
+    -timeSlot: String
+    -status: String
+    -basePrice: double
+    -discountAmount: double
+    -finalPrice: double
+    -cancellationFee: double
+    -cancellationReason: String
+    -notes: String
+    -createdAt: String
+    +Appointment()
+    +Appointment(id: String, customerId: String,⁂)
+    ǀ(customerUsername: String, customerName: String,⁂)
+    ǀ(customerEmail: String, customerPhone: String,⁂)
+    ǀ(membershipType: String, serviceId: String,⁂)
+    ǀ(serviceName: String, serviceCategory: String,⁂)
+    ǀ(serviceCustomization: String, stylistId: String,⁂)
+    ǀ(stylistName: String, appointmentDate: String,⁂)
+    ǀ(timeSlot: String, status: String, basePrice: double,⁂)
+    ǀ(discountAmount: double, finalPrice: double,⁂)
+    ǀ(cancellationFee: double, cancellationReason: String,⁂)
+    ǀ(notes: String, createdAt: String)
+    +getId() String
+    +setId(id: String) void
+    +getCustomerId() String
+    +setCustomerId(customerId: String) void
+    +getCustomerUsername() String
+    +setCustomerUsername(customerUsername: String) void
+    +getCustomerName() String
+    +setCustomerName(customerName: String) void
+    +getCustomerEmail() String
+    +setCustomerEmail(customerEmail: String) void
+    +getCustomerPhone() String
+    +setCustomerPhone(customerPhone: String) void
+    +getMembershipType() String
+    +setMembershipType(membershipType: String) void
+    +getServiceId() String
+    +setServiceId(serviceId: String) void
+    +getServiceName() String
+    +setServiceName(serviceName: String) void
+    +getServiceCategory() String
+    +setServiceCategory(serviceCategory: String) void
+    +getServiceCustomization() String
+    +setServiceCustomization(serviceCustomization: String) void
+    +getStylistId() String
+    +setStylistId(stylistId: String) void
+    +getStylistName() String
+    +setStylistName(stylistName: String) void
+    +getAppointmentDate() String
+    +setAppointmentDate(appointmentDate: String) void
+    +getTimeSlot() String
+    +setTimeSlot(timeSlot: String) void
+    +getStatus() String
+    +setStatus(status: String) void
+    +getBasePrice() double
+    +setBasePrice(basePrice: double) void
+    +getDiscountAmount() double
+    +setDiscountAmount(discountAmount: double) void
+    +getFinalPrice() double
+    +setFinalPrice(finalPrice: double) void
+    +getCancellationFee() double
+    +setCancellationFee(cancellationFee: double) void
+    +getCancellationReason() String
+    +setCancellationReason(cancellationReason: String) void
+    +getNotes() String
+    +setNotes(notes: String) void
+    +getCreatedAt() String
+    +setCreatedAt(createdAt: String) void
+    +applyCancellationPolicy(customer: Customer,⁂)
+    ǀ(hoursRemaining: long, reason: String) void
+    +toFileRecord() String
+  }
+  class AvailabilityChecker {
+    <<interface>>
+    +isSlotAvailable(stylistId: String, date: LocalDate,⁂)*
+    ǀ(timeSlot: String, excludeAppointmentId: String)* boolean
+    +getAvailableSlots(stylistId: String, date: LocalDate)* List~String~
+  }
+  class Review {
+    <<abstract>>
+    -id: String
+    -customerId: String
+    -customerName: String
+    -serviceId: String
+    -serviceName: String
+    -stylistId: String
+    -stylistName: String
+    -rating: int
+    -comment: String
+    -status: String
+    -reviewDate: String
+    +Review()
+    +Review(id: String, customerId: String,⁂)
+    ǀ(customerName: String, serviceId: String,⁂)
+    ǀ(serviceName: String, stylistId: String,⁂)
+    ǀ(stylistName: String, rating: int, comment: String,⁂)
+    ǀ(status: String, reviewDate: String)
+    +getId() String
+    +setId(id: String) void
+    +getCustomerId() String
+    +setCustomerId(customerId: String) void
+    +getCustomerName() String
+    +setCustomerName(customerName: String) void
+    +getServiceId() String
+    +setServiceId(serviceId: String) void
+    +getServiceName() String
+    +setServiceName(serviceName: String) void
+    +getStylistId() String
+    +setStylistId(stylistId: String) void
+    +getStylistName() String
+    +setStylistName(stylistName: String) void
+    +getRating() int
+    +setRating(rating: int) void
+    +getComment() String
+    +setComment(comment: String) void
+    +getStatus() String
+    +setStatus(status: String) void
+    +getReviewDate() String
+    +setReviewDate(reviewDate: String) void
+    +getStarsDisplay() String
+    +displayForUser(viewingUser: User)* String
+    +isVerified()* boolean
+    +getBadgeTitle()* String
+    +toFileRecord()* String
+  }
+  class PublicReview {
+    +PublicReview()
+    +PublicReview(id: String, customerId: String,⁂)
+    ǀ(customerName: String, serviceId: String,⁂)
+    ǀ(serviceName: String, stylistId: String,⁂)
+    ǀ(stylistName: String, rating: int, comment: String,⁂)
+    ǀ(status: String, reviewDate: String)
+    +isVerified() boolean
+    +getBadgeTitle() String
+    +displayForUser(viewingUser: User) String
+    +toFileRecord() String
+  }
+  class VerifiedReview {
+    -appointmentId: String
+    +VerifiedReview()
+    +VerifiedReview(id: String, customerId: String,⁂)
+    ǀ(customerName: String, serviceId: String,⁂)
+    ǀ(serviceName: String, stylistId: String,⁂)
+    ǀ(stylistName: String, rating: int, comment: String,⁂)
+    ǀ(status: String, reviewDate: String,⁂)
+    ǀ(appointmentId: String)
+    +getAppointmentId() String
+    +setAppointmentId(appointmentId: String) void
+    +isVerified() boolean
+    +getBadgeTitle() String
+    +displayForUser(viewingUser: User) String
+    +toFileRecord() String
+  }
+}
+User <|-- Admin
+User <|-- Customer
+Stylist <|-- FullTimeStylist
+SalonService <|-- HairService
+SalonService <|-- NailService
+Stylist <|-- PartTimeStylist
+Customer <|-- PremiumCustomer
+Review <|-- PublicReview
+Customer <|-- RegularCustomer
+SalonService <|-- SkinService
+Review <|-- VerifiedReview
+AdminPrivileges <|.. Admin
+AvailabilityChecker <|.. AppointmentService
+AdminController "1" --> "1" UserService : userService
+AdminController "1" --> "1" AdminService : adminService
+AdminController "1" --> "1" SalonCatalogService : catalogService
+AdminController "1" --> "1" StylistService : stylistService
+AdminController "1" --> "1" AppointmentService : appointmentService
+AdminController "1" --> "1" ReviewService : reviewService
+AppointmentController "1" --> "1" AppointmentService : appointmentService
+AppointmentController "1" --> "1" SalonCatalogService : catalogService
+AppointmentController "1" --> "1" StylistService : stylistService
+AppointmentController "1" --> "1" UserService : userService
+AuthController "1" --> "1" UserService : userService
+AuthController "1" --> "1" AdminService : adminService
+CustomerController "1" --> "1" UserService : userService
+HomeController "1" --> "1" SalonCatalogService : catalogService
+HomeController "1" --> "1" StylistService : stylistService
+HomeController "1" --> "1" ReviewService : reviewService
+ReviewCatalogController "1" --> "1" ReviewService : reviewService
+ReviewCatalogController "1" --> "1" SalonCatalogService : catalogService
+ReviewCatalogController "1" --> "1" StylistService : stylistService
+ReviewCatalogController "1" --> "1" AppointmentService : appointmentService
+ServiceCatalogController "1" --> "1" SalonCatalogService : catalogService
+StylistCatalogController "1" --> "1" StylistService : stylistService
+AdminRepository "1" --> "1" FileStorageManager : fileStorage
+AppointmentRepository "1" --> "1" FileStorageManager : fileStorage
+ReviewRepository "1" --> "1" FileStorageManager : fileStorage
+ServiceRepository "1" --> "1" FileStorageManager : fileStorage
+StylistRepository "1" --> "1" FileStorageManager : fileStorage
+UserRepository "1" --> "1" FileStorageManager : fileStorage
+AdminService "1" --> "1" AdminRepository : adminRepository
+AppointmentService "1" --> "1" AppointmentRepository : appointmentRepository
+AppointmentService "1" --> "1" UserRepository : userRepository
+AppointmentService "1" --> "1" SalonCatalogService : catalogService
+AppointmentService "1" --> "1" StylistService : stylistService
+ReviewService "1" --> "1" ReviewRepository : reviewRepository
+ReviewService "1" --> "1" AppointmentRepository : appointmentRepository
+SalonCatalogService "1" --> "1" ServiceRepository : serviceRepository
+StylistService "1" --> "1" StylistRepository : stylistRepository
+UserService "1" --> "1" UserRepository : userRepository
+UserService "1" --> "1" AdminRepository : adminRepository
+Appointment "0..*" --> "1" Customer : customerId
+Appointment "0..*" --> "1" SalonService : serviceId
+Appointment "0..*" --> "1" Stylist : stylistId
+Review "0..*" --> "1" Customer : customerId
+Review "0..*" --> "1" SalonService : serviceId
+Review "0..*" --> "1" Stylist : stylistId
+VerifiedReview "0..1" --> "1" Appointment : appointmentId
+AdminActivityLog "0..*" --> "1" Admin : adminUsername
+Review ..> User : displayForUser(viewingUser)
+UserRepository ..> Customer : creates
+AdminRepository ..> Admin : creates
+AdminRepository ..> AdminActivityLog : creates
+ServiceRepository ..> SalonService : creates
+StylistRepository ..> Stylist : creates
+AppointmentRepository ..> Appointment : creates
+ReviewRepository ..> Review : creates
+UserService ..> User : uses
+AdminService ..> Admin : uses
+SalonCatalogService ..> SalonService : uses
+StylistService ..> Stylist : uses
+AppointmentService ..> Appointment : uses
+ReviewService ..> Review : uses
+GlobalControllerAdvice ..> User : uses

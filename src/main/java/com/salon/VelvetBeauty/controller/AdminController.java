@@ -49,6 +49,74 @@ public class AdminController {
     }
 
     // ==========================================
+    // 0. MY ADMIN PROFILE
+    // ==========================================
+    @GetMapping("/profile")
+    public String myProfile(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        Admin admin = verifyAdmin(session);
+        if (admin == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access Denied: Administrative credentials required.");
+            return "redirect:/login";
+        }
+
+        // Always show the latest saved details from admins.txt
+        Optional<Admin> freshOpt = adminService.getAdminById(admin.getId());
+        if (freshOpt.isEmpty()) {
+            session.invalidate();
+            redirectAttributes.addFlashAttribute("errorMessage", "Your admin account could not be found. Please sign in again.");
+            return "redirect:/login";
+        }
+        Admin fresh = freshOpt.get();
+        session.setAttribute("currentUser", fresh);
+
+        // This admin's own activity, newest first
+        List<AdminActivityLog> allMine = adminService.getActivityLogs().stream()
+                .filter(log -> fresh.getUsername().equalsIgnoreCase(log.getAdminUsername()))
+                .sorted((a, b) -> b.getTimestamp().compareTo(a.getTimestamp()))
+                .toList();
+        String lastSignIn = allMine.stream()
+                .filter(log -> "LOGIN".equalsIgnoreCase(log.getAction()))
+                .map(AdminActivityLog::getTimestamp)
+                .findFirst()
+                .orElse(null);
+        model.addAttribute("admin", fresh);
+        model.addAttribute("myLogs", allMine.stream().limit(10).toList());
+        model.addAttribute("lastSignIn", lastSignIn);
+        return "admin/profile";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateMyProfile(@RequestParam String email,
+                                  @RequestParam String phone,
+                                  @RequestParam(required = false) String password,
+                                  @RequestParam(required = false) String confirmPassword,
+                                  HttpSession session,
+                                  RedirectAttributes redirectAttributes) {
+        Admin admin = verifyAdmin(session);
+        if (admin == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access Denied: Administrative credentials required.");
+            return "redirect:/login";
+        }
+
+        boolean changingPassword = password != null && !password.isBlank();
+        if (changingPassword && !password.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "The new passwords do not match. Nothing was changed.");
+            return "redirect:/admin/profile";
+        }
+
+        // Role and department are not self-editable (null keeps the current values)
+        boolean updated = adminService.updateAdmin(admin.getId(), email, phone,
+                changingPassword ? password : null, null, null, admin.getUsername());
+        if (updated) {
+            adminService.getAdminById(admin.getId()).ifPresent(fresh -> session.setAttribute("currentUser", fresh));
+            redirectAttributes.addFlashAttribute("successMessage", "Your admin profile has been updated successfully!");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update your profile. Please try again.");
+        }
+        return "redirect:/admin/profile";
+    }
+
+    // ==========================================
     // 1. DASHBOARD & OVERVIEW
     // ==========================================
     @GetMapping("/dashboard")
@@ -194,7 +262,7 @@ public class AdminController {
             return "redirect:/admin/services/new";
         }
         if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidPrice(basePrice)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Base price must be a positive amount (Rs 0.01 – Rs 5,00,00,000).");
+            redirectAttributes.addFlashAttribute("errorMessage", "Base price must be a positive amount (Rs 0.01 Ã¢â‚¬â€œ Rs 5,00,00,000).");
             return "redirect:/admin/services/new";
         }
         if (!com.salon.VelvetBeauty.util.ValidationUtil.isValidDuration(durationMinutes)) {

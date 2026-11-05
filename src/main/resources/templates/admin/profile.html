@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Profile')}"></head>
+<body>
+
+    <header th:replace="~{fragments/layout :: header}"></header>
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="profile-grid">
+
+                <!-- Left: identity, role & permissions -->
+                <div>
+                    <div class="card" style="padding: 28px; text-align: center; margin-bottom: 24px;">
+                        <div class="profile-avatar">
+                            <span th:text="${#strings.isEmpty(admin.fullName)} ? 'A' : ${#strings.toUpperCase(#strings.substring(admin.fullName, 0, 1))}">A</span>
+                        </div>
+                        <h3 style="margin-bottom: 6px;" th:text="${admin.fullName}">Admin Name</h3>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;" th:text="'Staff ID: ' + ${admin.id}">ID</p>
+
+                        <div th:if="${admin.adminRole == 'SALON_OWNER'}" class="badge badge-vip" style="margin-bottom: 16px;">SALON OWNER</div>
+                        <div th:if="${admin.adminRole != 'SALON_OWNER'}" class="badge badge-rose" style="margin-bottom: 16px;">RECEPTIONIST</div>
+
+                        <div class="profile-facts">
+                            <div><small>Department</small><strong th:text="${admin.department}">Department</strong></div>
+                            <div><small>Account Created</small><strong th:text="${admin.createdAt}">Date</strong></div>
+                            <div th:if="${lastSignIn != null}"><small>Last Sign-in</small><strong th:text="${lastSignIn}">Date</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 22px;">
+                        <h4 style="font-size: 1rem; margin-bottom: 12px; color: var(--gold-light);">Access Permissions</h4>
+                        <ul class="perm-list">
+                            <li th:classappend="${admin.canApproveAppointments()} ? 'yes' : 'no'">
+                                <span th:text="${admin.canApproveAppointments()} ? '✓' : '✕'">✓</span> Manage appointments</li>
+                            <li th:classappend="${admin.canModerateReviews()} ? 'yes' : 'no'">
+                                <span th:text="${admin.canModerateReviews()} ? '✓' : '✕'">✓</span> Moderate reviews</li>
+                            <li th:classappend="${admin.canManageUsers()} ? 'yes' : 'no'">
+                                <span th:text="${admin.canManageUsers()} ? '✓' : '✕'">✓</span> Manage customers &amp; admin accounts</li>
+                            <li th:classappend="${admin.canManageServices()} ? 'yes' : 'no'">
+                                <span th:text="${admin.canManageServices()} ? '✓' : '✕'">✓</span> Manage services catalog</li>
+                            <li th:classappend="${admin.canManageStylists()} ? 'yes' : 'no'">
+                                <span th:text="${admin.canManageStylists()} ? '✓' : '✕'">✓</span> Manage stylists &amp; staff</li>
+                        </ul>
+                        <a th:href="@{/admin/dashboard}" class="btn btn-primary btn-sm" style="width: 100%; margin-top: 16px;">Open Admin Console</a>
+                    </div>
+                </div>
+
+                <!-- Right: editable details + recent activity -->
+                <div>
+                    <div class="card" style="padding: 32px; margin-bottom: 24px;">
+                        <h3 style="margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">My Account Details</h3>
+
+                        <form th:action="@{/admin/profile/update}" method="POST">
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label class="form-label">Username (Immutable)</label>
+                                    <input type="text" class="form-control" th:value="${admin.username}" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" th:value="${admin.fullName}" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label class="form-label">Role</label>
+                                    <input type="text" class="form-control" th:value="${admin.getRoleDescription()}" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Department</label>
+                                    <input type="text" class="form-control" th:value="${admin.department}" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                </div>
+                            </div>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin: -6px 0 18px;">Role and department can only be changed by the salon owner from Admin Accounts.</p>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label class="form-label" for="admEmail">Email Address</label>
+                                    <input type="email" id="admEmail" name="email" class="form-control" th:value="${admin.email}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="admPhone">Phone Number</label>
+                                    <input type="tel" id="admPhone" name="phone" class="form-control" th:value="${admin.phone}" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label class="form-label" for="admPassword">New Password (leave empty to keep current)</label>
+                                    <input type="password" id="admPassword" name="password" class="form-control" placeholder="••••••••" autocomplete="new-password">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="admPassword2">Confirm New Password</label>
+                                    <input type="password" id="admPassword2" name="confirmPassword" class="form-control" placeholder="••••••••" autocomplete="new-password">
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px;">
+                                <a th:href="@{/admin/dashboard}" class="btn btn-outline">Back to Dashboard</a>
+                                <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card" style="padding: 24px 28px;">
+                        <h4 style="font-size: 1rem; margin-bottom: 14px; color: var(--gold-light);">My Recent Activity</h4>
+                        <p th:if="${#lists.isEmpty(myLogs)}" style="color: var(--text-muted); font-size: 0.88rem;">No activity recorded yet.</p>
+                        <ul th:if="${!#lists.isEmpty(myLogs)}" class="activity-list">
+                            <li th:each="log : ${myLogs}">
+                                <span class="badge badge-gold" th:text="${log.action}">LOGIN</span>
+                                <span class="activity-text" th:text="${log.details}">Details</span>
+                                <small th:text="${log.timestamp}">Time</small>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>
